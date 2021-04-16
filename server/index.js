@@ -50,6 +50,8 @@ const setUpAuth = (app) => {
   // TODO add socket auth
   app
     .register(fastifyJWT, {
+      // Warning: To simplify the educational project, the secret is passed explicitly.
+      // Do not do that in real production.
       secret: '***REMOVED***',
     })
     .decorate('authenticate', async (req, reply) => {
