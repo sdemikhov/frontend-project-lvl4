@@ -19,7 +19,7 @@ const App = () => (
       <Route path={routes.loginFormPath()}>
         <LoginForm />
       </Route>
-      <Route path="*">
+      <Route>
         <h2>Page not found</h2>
       </Route>
     </Switch>
