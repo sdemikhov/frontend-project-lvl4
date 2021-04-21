@@ -10,5 +10,8 @@ export default {
       newUser: 'Нет аккаунта?',
       registration: 'Регистрация',
     },
+    validation: {
+      required: 'Поле обязательно к заполнению',
+    },
   },
 };

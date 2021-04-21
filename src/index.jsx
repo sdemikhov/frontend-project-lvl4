@@ -17,13 +17,13 @@ if (process.env.NODE_ENV !== 'production') {
 
 const i18nextInstance = i18n.createInstance();
 i18nextInstance.init({ lng: 'ru', resources }).then(() => {
-  const container = document.getElementById('chat');
+  const root = document.getElementById('root');
 
   render(
     <I18nextProvider i18n={i18nextInstance}>
       <App />
     </I18nextProvider>,
-    container,
+    root,
   );
 
   console.log('it works!');
