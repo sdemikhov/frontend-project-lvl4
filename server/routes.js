@@ -17,7 +17,11 @@ const buildState = (defaultState) => {
     ],
     messages: [],
     currentChannelId: generalChannelId,
-    users: [],
+    users: [
+      // Warning: To simplify the educational project, the password is passed explicitly.
+      // Do not do that in real production.
+      { id: 1, username: 'admin', password: 'admin' },
+    ],
   };
 
   if (defaultState.messages) {

@@ -7,8 +7,11 @@ import {
 import { useTranslation } from 'react-i18next';
 import Form from 'react-bootstrap/Form';
 import Button from 'react-bootstrap/Button';
+import Alert from 'react-bootstrap/Alert';
+import axios from 'axios';
 
 import validationSchemas from '../validators.js';
+import routes from '../routes.js';
 
 const LoginForm = () => {
   const { t } = useTranslation();
@@ -17,10 +20,24 @@ const LoginForm = () => {
     <Formik
       initialValues={{ username: '', password: '' }}
       validationSchema={validationSchemas.LoginFormSchema}
-      onSubmit={(values, { setSubmitting }) => {
-        setSubmitting(true);
-        console.log(values);
-        setSubmitting(false);
+      onSubmit={async (values, actions) => {
+        actions.setStatus(null);
+        const { username, password } = values;
+        try {
+          const response = await axios.post(routes.loginPath(), { username, password });
+          const { token } = response.data;
+          localStorage.setItem(username, token);
+        } catch (err) {
+          if (axios.isAxiosError(err)) {
+            if (err.response.status === 401) {
+              actions.setStatus({ key: 'errors.network.unauthorized' });
+            } else {
+              actions.setStatus({ key: 'errors.network.unknown' });
+            }
+          } else {
+            actions.setStatus({ key: 'errors.unknown' });
+          }
+        }
       }}
     >
       {/**
@@ -33,6 +50,8 @@ const LoginForm = () => {
         values,
         touched,
         errors,
+        isSubmitting,
+        status,
       }) => (
         <Form noValidate onSubmit={handleSubmit}>
           <Form.Row>
@@ -45,6 +64,7 @@ const LoginForm = () => {
                 onChange={handleChange}
                 onBlur={handleBlur}
                 isInvalid={touched.username && !!errors.username}
+                disabled={isSubmitting}
               />
               <Form.Control.Feedback type="invalid">
                 {errors.username && t(errors.username.key)}
@@ -61,6 +81,7 @@ const LoginForm = () => {
                 onChange={handleChange}
                 onBlur={handleBlur}
                 isInvalid={touched.password && !!errors.password}
+                disabled={isSubmitting}
               />
               <Form.Control.Feedback type="invalid">
                 {errors.password && t(errors.password.key)}
@@ -68,7 +89,10 @@ const LoginForm = () => {
             </Form.Group>
           </Form.Row>
           <Form.Row>
-            <Button type="submit">{t('loginForm.submit')}</Button>
+            {status && <Alert variant="danger">{t(status.key)}</Alert>}
+          </Form.Row>
+          <Form.Row>
+            <Button type="submit" disabled={isSubmitting}>{t('loginForm.submit')}</Button>
           </Form.Row>
         </Form>
       )

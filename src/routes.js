@@ -10,4 +10,5 @@ export default {
   loginFormPath: () => [host, 'login'].join('/'),
   mainPagePath: () => [host, ''].join('/'),
   pageNotFound: () => [host, 'page-not-found'].join('/'),
+  loginPath: () => [host, prefix, 'login'].join('/'),
 };

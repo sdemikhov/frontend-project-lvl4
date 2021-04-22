@@ -25,6 +25,7 @@
   "license": "ISC",
   "homepage": "",
   "dependencies": {
+    "axios": "^0.21.1",
     "bootstrap": "^4.6.0",
     "core-js": "^3.10.1",
     "debug": "^4.3.1",
