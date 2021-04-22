@@ -5,7 +5,8 @@
   "main": "server/index.js",
   "type": "module",
   "engines": {
-    "node": ">= 14"
+    "node": ">= 14",
+    "npm" : "~6.0.0"
   },
   "scripts": {
     "test": "npx jest --colors",
