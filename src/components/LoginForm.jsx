@@ -1,5 +1,3 @@
-// @ts-check
-
 import React from 'react';
 import {
   Formik,
@@ -9,14 +7,22 @@ import Form from 'react-bootstrap/Form';
 import Button from 'react-bootstrap/Button';
 import Alert from 'react-bootstrap/Alert';
 import axios from 'axios';
+import { useHistory, useLocation } from 'react-router-dom';
 
 import validationSchemas from '../validators.js';
 import routes from '../routes.js';
+import { useAuth } from '../use-auth.jsx';
 
 const LoginForm = () => {
   const { t } = useTranslation();
+  const history = useHistory();
+  const location = useLocation();
+  const auth = useAuth();
 
-  return (
+  const { from } = location.state || { from: { pathname: routes.mainPagePath() } };
+  return auth.token ? (
+    <h1>{t('loginForm.alreadyLoggedIn')}</h1>
+  ) : (
     <Formik
       initialValues={{ username: '', password: '' }}
       validationSchema={validationSchemas.LoginFormSchema}
@@ -26,7 +32,9 @@ const LoginForm = () => {
         try {
           const response = await axios.post(routes.loginPath(), { username, password });
           const { token } = response.data;
-          localStorage.setItem(username, token);
+
+          auth.signin(token);
+          history.replace(from);
         } catch (err) {
           if (axios.isAxiosError(err)) {
             if (err.response.status === 401) {
@@ -40,9 +48,7 @@ const LoginForm = () => {
         }
       }}
     >
-      {/**
-       * @param {any} errors
-       */
+      {
       ({
         handleSubmit,
         handleChange,

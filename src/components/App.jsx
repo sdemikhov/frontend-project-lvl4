@@ -1,5 +1,3 @@
-// @ts-check
-
 import React from 'react';
 import {
   BrowserRouter as Router,
@@ -7,34 +5,36 @@ import {
   Route,
 } from 'react-router-dom';
 import Container from 'react-bootstrap/Container';
-import Navbar from 'react-bootstrap/Navbar';
 
 import routes from '../routes.js';
 import LoginForm from './LoginForm.jsx';
+import NavigationToolbar from './NavigationToolbar.jsx';
+import { ProvideAuth } from '../use-auth.jsx';
+import PageNotFound from './PageNotFound.jsx';
+import PrivateRoute from './PrivateRoute.jsx';
+import Chat from './Chat.jsx';
 
 const App = () => (
-  <>
-    <Navbar bg="light" expand="lg">
-      <Navbar.Brand href={routes.mainPagePath()}>Hexlet-Chat</Navbar.Brand>
-    </Navbar>
-    <Container>
-      <Router>
+  <ProvideAuth>
+    <Router>
+      <NavigationToolbar />
+      <Container>
         <Switch>
-          <Route exact path={routes.mainPagePath()}>
-            <h2>Under construction!</h2>
-          </Route>
+          <PrivateRoute exact path={routes.mainPagePath()}>
+            <Chat />
+          </PrivateRoute>
           <Route path={routes.loginFormPath()}>
             <div className="d-flex justify-content-center pt-5">
               <LoginForm />
             </div>
           </Route>
           <Route>
-            <h2>Page not found</h2>
+            <PageNotFound />
           </Route>
         </Switch>
-      </Router>
-    </Container>
-  </>
+      </Container>
+    </Router>
+  </ProvideAuth>
 );
 
 export default App;
