@@ -18,13 +18,13 @@ const App = () => (
   <ProvideAuth>
     <Router>
       <NavigationToolbar />
-      <Container>
+      <Container className="pt-5">
         <Switch>
           <PrivateRoute exact path={routes.mainPagePath()}>
             <Chat />
           </PrivateRoute>
           <Route path={routes.loginFormPath()}>
-            <div className="d-flex justify-content-center pt-5">
+            <div className="d-flex justify-content-center">
               <LoginForm />
             </div>
           </Route>
