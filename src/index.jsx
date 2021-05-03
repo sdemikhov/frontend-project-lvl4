@@ -9,6 +9,9 @@ import { Provider as StoreProvider } from 'react-redux';
 
 import '../assets/application.scss';
 import resources from './locales/locales.js';
+import { chatDataSlice } from './chat-data-slice.js';
+import { channelsSlice } from './channels-slice.js';
+import { messagesSlice } from './messages-slice.js';
 import App from './components/App.jsx';
 
 if (process.env.NODE_ENV !== 'production') {
@@ -18,10 +21,11 @@ if (process.env.NODE_ENV !== 'production') {
 const root = document.getElementById('root');
 const i18nextInstance = i18n.createInstance();
 i18nextInstance.init({ lng: 'ru', resources }).then(() => {
-  const initialState = {};
   const store = configureStore({
     reducer: {
-
+      chatData: chatDataSlice.reducer,
+      channels: channelsSlice.reducer,
+      messages: messagesSlice.reducer,
     },
   });
 

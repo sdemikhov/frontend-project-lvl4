@@ -9,4 +9,5 @@ export default {
   mainPagePath: () => [host, ''].join('/'),
   pageNotFound: () => [host, 'page-not-found'].join('/'),
   loginPath: () => [host, prefix, 'login'].join('/'),
+  chatDataPath: () => [host, prefix, 'data'].join('/'),
 };
