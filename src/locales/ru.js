@@ -16,6 +16,9 @@ export default {
       registration: 'Регистрация',
       alreadyLoggedIn: 'Вход в учетную запись уже выполнен',
     },
+    sendMessageForm: {
+      sendButton: 'Отправить',
+    },
     validation: {
       required: 'Поле обязательно к заполнению',
     },
@@ -28,7 +31,7 @@ export default {
       pageNotFound: 'Страница не найдена',
     },
     chat: {
-      info: 'Сайт в разработке, скоро здесь будет отличный чат.',
+      loading: 'Загружаю данные...',
     },
   },
 };

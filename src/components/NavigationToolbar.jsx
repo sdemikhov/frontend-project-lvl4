@@ -9,8 +9,8 @@ const NavigationToolbar = () => {
   const { t } = useTranslation();
 
   return (
-    <Navbar bg="light" expand="lg">
-      <Navbar.Brand href={routes.mainPagePath()} className="mr-auto">{t('navbar.brand')}</Navbar.Brand>
+    <Navbar expand="lg">
+      <Navbar.Brand href={routes.mainPagePath()} className="mr-auto text-light">{t('navbar.brand')}</Navbar.Brand>
       <AuthButton />
     </Navbar>
   );

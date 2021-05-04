@@ -1,10 +1,11 @@
+/* eslint-disable no-param-reassign, */
 import { createSlice, createEntityAdapter } from '@reduxjs/toolkit';
 
 import { getChatData } from './chat-data-slice.js';
 
 const messagesAdapter = createEntityAdapter();
 
-export const messagesSlice = createSlice({
+const messagesSlice = createSlice({
   name: 'messages',
   initialState: messagesAdapter.getInitialState(),
   reducers: {},
@@ -16,3 +17,5 @@ export const messagesSlice = createSlice({
     },
   },
 });
+
+export default messagesSlice.reducer;

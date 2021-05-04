@@ -1,8 +1,8 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import axios from 'axios';
 
-import routes from './routes.js';
-import { useAuth } from './use-auth.jsx';
+import routes from '../routes.js';
+import { useAuth } from '../use-auth.jsx';
 
 export const getChatData = createAsyncThunk(
   'data/getChatData',
@@ -16,7 +16,7 @@ export const getChatData = createAsyncThunk(
   },
 );
 
-export const chatDataSlice = createSlice(
+const chatDataSlice = createSlice(
   {
     name: 'chatData',
     initialState: { loading: 'idle', error: null },
@@ -28,3 +28,5 @@ export const chatDataSlice = createSlice(
     },
   },
 );
+
+export default chatDataSlice.reducer;

@@ -1,7 +1,5 @@
 import React from 'react';
-import {
-  Formik,
-} from 'formik';
+import { Formik } from 'formik';
 import { useTranslation } from 'react-i18next';
 import Form from 'react-bootstrap/Form';
 import Button from 'react-bootstrap/Button';

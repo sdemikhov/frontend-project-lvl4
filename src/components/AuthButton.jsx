@@ -19,7 +19,7 @@ const AuthButton = () => {
   return auth.token ? (
     <Button onClick={signout}>{t('navbar.signout')}</Button>
   ) : (
-    <span>{t('navbar.notLoggedIn')}</span>
+    <span className="text-light">{t('navbar.notLoggedIn')}</span>
   );
 };
 

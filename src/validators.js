@@ -12,6 +12,9 @@ const buildSchemas = () => {
       username: Yup.string().required(),
       password: Yup.string().required(),
     }),
+    MessageFormSchema: Yup.object({
+      message: Yup.string().required(),
+    }),
   };
 };
 
