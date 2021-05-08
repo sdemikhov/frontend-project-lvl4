@@ -18,7 +18,7 @@ const LoginForm = () => {
   const auth = useAuth();
 
   const { from } = location.state || { from: { pathname: routes.mainPagePath() } };
-  return auth.token ? (
+  return auth.user.token ? (
     <h1>{t('loginForm.alreadyLoggedIn')}</h1>
   ) : (
     <Formik
@@ -27,11 +27,11 @@ const LoginForm = () => {
       onSubmit={async (values, actions) => {
         actions.setStatus(null);
         const { username, password } = values;
+
         try {
           const response = await axios.post(routes.loginPath(), { username, password });
-          const { token } = response.data;
 
-          auth.signin(token);
+          auth.signin(response.data);
           history.replace(from);
         } catch (err) {
           if (axios.isAxiosError(err)) {

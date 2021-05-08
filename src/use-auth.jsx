@@ -6,6 +6,7 @@ import React, {
 } from 'react';
 
 const tokenKey = 'token';
+const usernameKey = 'username';
 
 const authContext = createContext();
 
@@ -13,21 +14,26 @@ export const useAuth = () => useContext(authContext);
 
 const useProvideAuth = () => {
   const savedToken = localStorage.getItem(tokenKey);
+  const savedUsername = localStorage.getItem(usernameKey);
 
-  const [token, setToken] = useState(savedToken);
+  const [user, setUser] = useState({ username: savedUsername, token: savedToken });
 
-  const signin = (newToken) => {
-    localStorage.setItem(tokenKey, newToken);
-    setToken(newToken);
+  const signin = ({ username, token }) => {
+    localStorage.setItem(tokenKey, token);
+    localStorage.setItem(usernameKey, username);
+
+    setUser({ username, token });
   };
 
   const signout = () => {
     localStorage.removeItem(tokenKey);
-    setToken(false);
+    localStorage.removeItem(usernameKey);
+
+    setUser(false);
   };
 
   return {
-    token,
+    user,
     signin,
     signout,
   };
@@ -35,6 +41,7 @@ const useProvideAuth = () => {
 
 export const ProvideAuth = ({ children }) => {
   const auth = useProvideAuth();
+
   return (
     <authContext.Provider value={auth}>
       {children}

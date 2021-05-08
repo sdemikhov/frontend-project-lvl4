@@ -16,7 +16,7 @@ const AuthButton = () => {
     history.push(routes.mainPagePath());
   };
 
-  return auth.token ? (
+  return auth.user.token ? (
     <Button onClick={signout}>{t('navbar.signout')}</Button>
   ) : (
     <span className="text-light">{t('navbar.notLoggedIn')}</span>

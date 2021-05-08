@@ -2,18 +2,19 @@ import React, { useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSelector, useDispatch } from 'react-redux';
 import Spinner from 'react-bootstrap/Spinner';
-import Alert from 'react-bootstrap/Alert';
 import Nav from 'react-bootstrap/Nav';
-import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import Form from 'react-bootstrap/Form';
 import Button from 'react-bootstrap/Button';
 import cn from 'classnames';
 import { Formik } from 'formik';
+import { createSelector } from 'reselect';
 
-import { getChatData } from '../slices/chat-data-slice.js';
 import { setCurrentChannelId } from '../slices/channels-slice.js';
 import validationSchemas from '../validators.js';
+import { useSocket } from '../use-socket.jsx';
+import { useAuth } from '../use-auth.jsx';
+import { getChatData } from '../slices/chat-data-slice.js';
 
 const Channels = () => {
   const dispatch = useDispatch();
@@ -48,16 +49,63 @@ const Channels = () => {
   );
 };
 
+const getCurrentChannelId = ({ channels }) => channels.currentChannelId;
+
+const getMessagesInCurrentChannel = createSelector(
+  (state) => state.messages,
+  getCurrentChannelId,
+  ({ ids, entities }, currentChannelId) => {
+    const messagesInCurrentChannel = ids.reduce((acc, id) => {
+      const message = entities[id];
+
+      if (message.channelId === currentChannelId) {
+        return [...acc, message];
+      }
+
+      return acc;
+    }, []);
+
+    return messagesInCurrentChannel;
+  },
+);
+
+const Messages = () => {
+  const messages = useSelector(getMessagesInCurrentChannel);
+
+  return (
+    <>
+      {messages.map(({ id, body, sender }) => (
+        <div key={id} className="text-break">
+          <b>{sender}</b>
+          {`: ${body}`}
+        </div>
+      ))}
+    </>
+  );
+};
+
 const SendMessageForm = () => {
   const { t } = useTranslation();
+  const socket = useSocket();
   const inputRef = useRef(null);
+  const currentChannelId = useSelector(getCurrentChannelId);
+  const { user: { username } } = useAuth();
 
   return (
     <Formik
       initialValues={{ message: '' }}
       validationSchema={validationSchemas.MessageFormSchema}
       onSubmit={async (values, actions) => {
-        console.log(values);
+        const message = {
+          channelId: currentChannelId,
+          body: values.message,
+          sender: username,
+        };
+
+        socket.emit('newMessage', message, (response) => {
+          console.log(response.status); // ok
+        });
+
         actions.resetForm();
         inputRef.current.focus();
       }}
@@ -86,6 +134,7 @@ const SendMessageForm = () => {
                 onBlur={handleBlur}
                 disabled={isSubmitting}
                 autoFocus
+                data-testid="new-message"
               />
             </Col>
             <Button
@@ -104,43 +153,47 @@ const SendMessageForm = () => {
 
 const Chat = () => {
   const { t } = useTranslation();
+  const loading = useSelector(({ chatData }) => chatData.loading);
   const dispatch = useDispatch();
+  const { user: { token } } = useAuth();
 
-  const chatData = useSelector((state) => state.chatData);
+  if (loading === 'idle') {
+    dispatch(getChatData(token));
+  }
 
-  if (chatData.loading === 'idle') {
-    dispatch(getChatData());
-  }
-  if (chatData.loading === 'fulfilled') {
-    return (
-      <>
-        <Col className="bg-dark border-top border-right border-secondary" md="3" xl="2">
-          <Channels />
-        </Col>
-        <Col className="d-flex flex-column" as="main" xl="10" md="9" xs="12">
-          <Row className="flex-grow-1 bg-light">
-            <Col>
-              <p>messages</p>
-            </Col>
-          </Row>
-          <Row className="bg-light">
-            <Col>
-              <SendMessageForm />
-            </Col>
-          </Row>
-        </Col>
-      </>
-    );
-  }
-  if (chatData.loading === 'rejected') {
-    return <Alert variant="danger">{t('errors.network.unknown')}</Alert>;
-  }
+  const renderStatus = (loadingStatus) => {
+    switch (loadingStatus) {
+      case 'pending':
+        return (
+          <>
+            <Spinner animation="border" role="status" />
+            <span>{t('chat.loading')}</span>
+          </>
+        );
+      case 'rejected':
+        return <p className="text-danger">{t('errors.network.unknown')}</p>;
+      default:
+        return null;
+    }
+  };
 
   return (
-    <Col>
-      <Spinner animation="border" role="status" />
-      <span>{t('chat.loading')}</span>
-    </Col>
+    <>
+      <Col className="bg-dark border-top border-right border-secondary" md="3" xl="2">
+        <Channels />
+      </Col>
+      <Col className="h-100" as="main" xl="10" md="9" xs="12">
+        <div className="d-flex flex-column h-100">
+          <div className="overflow-hidden">
+            <Messages />
+          </div>
+          <div className="mt-auto">
+            {renderStatus()}
+            <SendMessageForm />
+          </div>
+        </div>
+      </Col>
+    </>
   );
 };
 

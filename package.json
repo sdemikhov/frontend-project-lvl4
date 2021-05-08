@@ -2,7 +2,7 @@
   "name": "@hexlet/code",
   "version": "0.0.1",
   "description": "",
-  "main": "server/index.js",
+  "main": "server/init.jsx",
   "type": "module",
   "engines": {
     "node": "14",
@@ -56,6 +56,7 @@
     "redux": "^4.0.5",
     "regenerator-runtime": "^0.13.7",
     "reselect": "^4.0.0",
+    "socket.io-client": "^4.0.2",
     "yup": "^0.32.9"
   },
   "devDependencies": {
@@ -88,6 +89,7 @@
     "postcss-loader": "^5.2.0",
     "postcss-preset-env": "^6.7.0",
     "sass-loader": "^11.0.1",
+    "socket.io-mock": "^1.3.1",
     "style-loader": "^2.0.0",
     "webpack": "^5.31.0",
     "webpack-cli": "^4.6.0",

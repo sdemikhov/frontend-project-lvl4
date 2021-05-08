@@ -2,14 +2,12 @@ import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import axios from 'axios';
 
 import routes from '../routes.js';
-import { useAuth } from '../use-auth.jsx';
 
 export const getChatData = createAsyncThunk(
   'data/getChatData',
-  async () => {
-    const auth = useAuth();
+  async (token) => {
     const response = await axios.get(routes.chatDataPath(), {
-      headers: { Authorization: `Bearer ${auth.token}` },
+      headers: { Authorization: `Bearer ${token}` },
     });
 
     return response.data;
@@ -24,7 +22,10 @@ const chatDataSlice = createSlice(
     extraReducers: {
       [getChatData.pending]: (state) => ({ ...state, loading: 'pending' }),
       [getChatData.fulfilled]: (state) => ({ ...state, loading: 'fulfilled' }),
-      [getChatData.rejected]: (state, action) => ({ ...state, loading: 'rejected', error: action.error }),
+      [getChatData.rejected]: (state, action) => {
+        console.log(action.error);
+        return { ...state, loading: 'rejected', error: action.error };
+      },
     },
   },
 );
