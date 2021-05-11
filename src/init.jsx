@@ -10,8 +10,12 @@ import { ProvideAuth } from './use-auth.jsx';
 import { SocketProvider } from './use-socket.jsx';
 import resources from './locales/locales.js';
 import chatDataReducer from './slices/chat-data-slice.js';
-import channelsReducer from './slices/channels-slice.js';
-import messagesReducer, { addMessage } from './slices/messages-slice.js';
+import channelsReducer, {
+  removeChannel,
+  renameChannel,
+  newChannel,
+} from './slices/channels-slice.js';
+import messagesReducer, { newMessage } from './slices/messages-slice.js';
 import App from './components/App.jsx';
 
 export default (socketInstance) => {
@@ -32,9 +36,29 @@ export default (socketInstance) => {
     socketInstance.on(
       'newMessage',
       (message) => {
-        store.dispatch(addMessage(message));
+        store.dispatch(newMessage(message));
       },
-      () => {},
+    );
+
+    socketInstance.on(
+      'newChannel',
+      (channel) => {
+        store.dispatch(newChannel(channel));
+      },
+    );
+
+    socketInstance.on(
+      'renameChannel',
+      (channel) => {
+        store.dispatch(renameChannel({ id: channel.id, changes: { ...channel } }));
+      },
+    );
+
+    socketInstance.on(
+      'removeChannel',
+      ({ id }) => {
+        store.dispatch(removeChannel(id));
+      },
     );
 
     return (

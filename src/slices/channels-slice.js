@@ -14,6 +14,9 @@ const channelsSlice = createSlice({
     setCurrentChannelId(state, action) {
       state.currentChannelId = action.payload;
     },
+    removeChannel: channelsAdapter.removeOne,
+    renameChannel: channelsAdapter.updateOne,
+    newChannel: channelsAdapter.addOne,
   },
   extraReducers: {
     [getChatData.fulfilled]: (state, action) => {
@@ -25,5 +28,11 @@ const channelsSlice = createSlice({
   },
 });
 
-export const { setCurrentChannelId } = channelsSlice.actions;
+export const {
+  setCurrentChannelId,
+  removeChannel,
+  renameChannel,
+  newChannel,
+} = channelsSlice.actions;
+
 export default channelsSlice.reducer;

@@ -19,6 +19,24 @@ export default {
     sendMessageForm: {
       sendButton: 'Отправить',
     },
+    channelInteractionForm: {
+      sendButton: 'Отправить',
+      cancelButton: 'Отменить',
+    },
+    channelsNav: {
+      dropdownRename: 'Переименовать',
+      dropdownRemove: 'Удалить',
+      addButton: 'Новый...',
+    },
+    modal: {
+      titles: {
+        removeChannel: 'Удалить канал',
+        renameChannel: 'Переименовать канал',
+        newChannel: 'Создать канал',
+      },
+      removeButton: 'Удалить',
+      cancelButton: 'Отменить',
+    },
     validation: {
       required: 'Поле обязательно к заполнению',
     },

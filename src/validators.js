@@ -15,6 +15,9 @@ const buildSchemas = () => {
     MessageFormSchema: Yup.object({
       message: Yup.string().required(),
     }),
+    ChannelIteractionFormSchema: Yup.object({
+      name: Yup.string().required(),
+    }),
   };
 };
 
