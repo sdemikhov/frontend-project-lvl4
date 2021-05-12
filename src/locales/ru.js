@@ -18,9 +18,9 @@ export default {
     },
     registerForm: {
       username: 'Имя пользователя',
-      usernamePlaceholder: 'от 3 до 20 символов',
+      usernamePlaceholder: 'От 3 до 20 символов',
       password: 'Пароль',
-      passwordPlaceholder: 'не менее 6 символов',
+      passwordPlaceholder: 'Не менее 6 символов',
       passwordConfirmation: 'Подтвердите пароль',
       passwordConfirmationPlaceholder: 'Пароли должны совпадать',
       submit: 'Зарегистрироваться',

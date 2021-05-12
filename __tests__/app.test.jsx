@@ -169,7 +169,7 @@ test('should login with correct credentials or get error message', async () => {
 
   expect(screen.getByRole('button', { name: /Войти/i })).toBeDisabled();
 
-  expect(await screen.findByText(/Неверный логин или пароль/i)).toBeInTheDocument();
+  expect(await screen.findByText(/Неверные имя пользователя или пароль/i)).toBeInTheDocument();
 
   userEvent.type(screen.getByLabelText(/Ваш ник/i), 'CorrectUsername');
   userEvent.type(screen.getByLabelText(/Пароль/i), 'CorrectPassword');
