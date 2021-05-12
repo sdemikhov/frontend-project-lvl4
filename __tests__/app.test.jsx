@@ -212,8 +212,19 @@ test('should register with correct credentials or get error message', async () =
   });
   expect(await screen.findByText(/Имя пользователя/i)).toBeInTheDocument();
 
+  userEvent.type(screen.getByLabelText(/Имя пользователя/i), 'V');
+  userEvent.type(screen.getByLabelText('Пароль'), 'Passw');
+  userEvent.type(screen.getByLabelText('Подтвердите пароль'), 'Pass');
+  userEvent.click(screen.getByRole('button', { name: /Зарегистрироваться/i }));
+  expect(await screen.findByText(/От 3 до 20 символов/i)).toBeVisible();
+  expect(await screen.findByText(/Не менее 6 символов/i)).toBeVisible();
+  expect(await screen.findByText(/Пароли должны совпадать/i)).toBeVisible();
+
+  userEvent.clear(screen.getByLabelText(/Имя пользователя/i));
   userEvent.type(screen.getByLabelText(/Имя пользователя/i), 'Vasyok');
+  userEvent.clear(screen.getByLabelText('Пароль'));
   userEvent.type(screen.getByLabelText('Пароль'), 'randomPassword');
+  userEvent.clear(screen.getByLabelText('Подтвердите пароль'));
   userEvent.type(screen.getByLabelText('Подтвердите пароль'), 'randomPassword');
   userEvent.click(screen.getByRole('button', { name: /Зарегистрироваться/i }));
   expect(screen.getByRole('button', { name: /Зарегистрироваться/i })).toBeDisabled();

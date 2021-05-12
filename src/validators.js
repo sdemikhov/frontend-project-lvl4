@@ -3,11 +3,9 @@ import * as Yup from 'yup';
 Yup.setLocale({
   mixed: {
     required: () => ({ key: 'validation.required' }),
-    oneOf: () => ({ key: 'validation.oneOf' }),
   },
   string: {
     min: ({ min }) => ({ key: 'validation.min', values: { count: min } }),
-    max: ({ max }) => ({ key: 'validation.max', values: { count: max } }),
   },
 });
 
@@ -24,10 +22,10 @@ export default {
   }),
   RegistrationFormSchema: Yup.object({
     username: Yup.string().required()
-      .min(3, () => ({ key: 'registerForm.usernamePlaceholder' }))
-      .max(20, () => ({ key: 'registerForm.usernamePlaceholder' })),
+      .min(3, () => ({ key: 'validation.username' }))
+      .max(20, () => ({ key: 'validation.username' })),
     password: Yup.string().required().min(6),
     passwordConfirmation: Yup.string().min(6)
-      .oneOf([Yup.ref('password'), null]),
+      .oneOf([Yup.ref('password'), null], () => ({ key: 'validation.passwordConfirmation' })),
   }),
 };
