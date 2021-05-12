@@ -112,6 +112,11 @@ const searchMessage = (sender, body) => (content, element) => {
 let testData; // eslint-disable-line
 
 beforeEach(async () => {
+  nock.cleanAll();
+  window.localStorage.removeItem('token');
+  window.localStorage.removeItem('username');
+  window.history.pushState({}, 'test page', host);
+
   const state = buildState();
   const socket = getSocket(state);
   const vdom = await init(socket.socketClient);
@@ -131,53 +136,95 @@ afterAll(() => {
   nock.enableNetConnect();
 });
 
-afterEach(() => {
-  window.localStorage.removeItem('token');
-  window.localStorage.removeItem('username');
+test('should be redirected to login page', async () => {
+  expect(window.location.pathname).toBe('/login');
+
+  expect(screen.getByLabelText(/Ваш ник/i)).toBeInTheDocument();
+  expect(screen.getByLabelText(/Пароль/i)).toBeInTheDocument();
 });
 
-describe('Unauthorized user:', () => {
-  test('should be redirected to login page', async () => {
-    expect(screen.getByLabelText(/Ваш ник/i)).toBeInTheDocument();
-    expect(screen.getByLabelText(/Пароль/i)).toBeInTheDocument();
+test('should login with correct credentials or get error message', async () => {
+  const { state } = testData;
+  state.messages.push(
+    {
+      id: getNextId(),
+      channelId: state.currentChannelId,
+      sender: 'admin',
+      body: 'welcome',
+    },
+  );
+
+  nock(host)
+    .post('/api/v1/login')
+    .reply(401)
+    .post('/api/v1/login')
+    .reply(200, { token: 'JWT' })
+    .get('/api/v1/data')
+    .reply(200, state);
+
+  expect(window.location.pathname).toBe('/login');
+  userEvent.type(screen.getByLabelText(/Ваш ник/i), 'WrongUsername');
+  userEvent.type(screen.getByLabelText(/Пароль/i), 'WrongPassword');
+  userEvent.click(screen.getByRole('button', { name: /Войти/i }));
+
+  expect(screen.getByRole('button', { name: /Войти/i })).toBeDisabled();
+
+  expect(await screen.findByText(/Неверный логин или пароль/i)).toBeInTheDocument();
+
+  userEvent.type(screen.getByLabelText(/Ваш ник/i), 'CorrectUsername');
+  userEvent.type(screen.getByLabelText(/Пароль/i), 'CorrectPassword');
+  userEvent.click(screen.getByRole('button', { name: /Войти/i }));
+
+  expect(screen.getByRole('button', { name: /Войти/i })).toBeDisabled();
+
+  expect(await screen.findByText(/general/i)).toBeInTheDocument();
+  expect(await screen.findByText(searchMessage('admin', 'welcome'))).toBeInTheDocument();
+});
+
+test('should register with correct credentials or get error message', async () => {
+  const { state } = testData;
+  state.users = [
+    { id: 1, username: 'Vasyok', password: 'somePassword' },
+  ];
+  state.messages.push(
+    {
+      id: getNextId(),
+      channelId: state.currentChannelId,
+      sender: 'admin',
+      body: 'Hello',
+    },
+  );
+
+  nock(host)
+    .post('/api/v1/signup')
+    .reply(409)
+    .post('/api/v1/signup')
+    .reply(200, { token: 'JWT', username: 'Vasyok' })
+    .get('/api/v1/data')
+    .reply(200, state);
+
+  expect(window.location.pathname).toBe('/login');
+  expect(await screen.findByText(/Регистрация/i)).toBeInTheDocument();
+
+  userEvent.click(screen.getByRole('link', { name: /Регистрация/i }));
+  await waitFor(() => {
+    expect(window.location.pathname).toBe('/signup');
   });
+  expect(await screen.findByText(/Имя пользователя/i)).toBeInTheDocument();
 
-  test('should login with correct credentials or get error message', async () => {
-    const { state } = testData;
-    state.messages.push(
-      {
-        id: getNextId(),
-        channelId: state.currentChannelId,
-        sender: 'admin',
-        body: 'welcome',
-      },
-    );
+  userEvent.type(screen.getByLabelText(/Имя пользователя/i), 'Vasyok');
+  userEvent.type(screen.getByLabelText('Пароль'), 'randomPassword');
+  userEvent.type(screen.getByLabelText('Подтвердите пароль'), 'randomPassword');
+  userEvent.click(screen.getByRole('button', { name: /Зарегистрироваться/i }));
+  expect(screen.getByRole('button', { name: /Зарегистрироваться/i })).toBeDisabled();
+  expect(await screen.findByText(/Пользователь с таким именем уже существует/i)).toBeInTheDocument();
 
-    nock(host)
-      .post('/api/v1/login')
-      .reply(401)
-      .post('/api/v1/login')
-      .reply(200, { token: 'JWT' })
-      .get('/api/v1/data')
-      .reply(200, state);
-
-    userEvent.type(screen.getByLabelText(/Ваш ник/i), 'WrongUsername');
-    userEvent.type(screen.getByLabelText(/Пароль/i), 'WrongPassword');
-    userEvent.click(screen.getByRole('button', { name: /Войти/i }));
-
-    expect(screen.getByRole('button', { name: /Войти/i })).toBeDisabled();
-
-    expect(await screen.findByText(/Неверный логин или пароль/i)).toBeInTheDocument();
-
-    userEvent.type(screen.getByLabelText(/Ваш ник/i), 'CorrectUsername');
-    userEvent.type(screen.getByLabelText(/Пароль/i), 'CorrectPassword');
-    userEvent.click(screen.getByRole('button', { name: /Войти/i }));
-
-    expect(screen.getByRole('button', { name: /Войти/i })).toBeDisabled();
-
-    expect(await screen.findByText(/general/i)).toBeInTheDocument();
-    expect(await screen.findByText(searchMessage('admin', 'welcome'))).toBeInTheDocument();
-  });
+  userEvent.clear(screen.getByLabelText(/Имя пользователя/i));
+  userEvent.type(screen.getByLabelText(/Имя пользователя/i), 'Vasiliy');
+  userEvent.click(screen.getByRole('button', { name: /Зарегистрироваться/i }));
+  expect(screen.getByRole('button', { name: /Зарегистрироваться/i })).toBeDisabled();
+  expect(await screen.findByText(/general/i)).toBeInTheDocument();
+  expect(await screen.findByText(searchMessage('admin', 'Hello'))).toBeInTheDocument();
 });
 
 test('User should type new message to default channel', async () => {
@@ -189,6 +236,7 @@ test('User should type new message to default channel', async () => {
     .get('/api/v1/data')
     .reply(200, state);
 
+  expect(window.location.pathname).toBe('/login');
   userEvent.type(screen.getByLabelText(/Ваш ник/i), 'Vasyan');
   userEvent.type(screen.getByLabelText(/Пароль/i), 'CorrectPassword');
   userEvent.click(screen.getByRole('button', { name: /Войти/i }));
@@ -211,6 +259,7 @@ test('User should change the channel and type new message', async () => {
     .get('/api/v1/data')
     .reply(200, state);
 
+  expect(window.location.pathname).toBe('/login');
   userEvent.type(screen.getByLabelText(/Ваш ник/i), 'Vasya1');
   userEvent.type(screen.getByLabelText(/Пароль/i), 'CorrectPassword');
   userEvent.click(screen.getByRole('button', { name: /Войти/i }));
@@ -238,6 +287,7 @@ test('User should create new channel', async () => {
     .get('/api/v1/data')
     .reply(200, state);
 
+  expect(window.location.pathname).toBe('/login');
   userEvent.type(screen.getByLabelText(/Ваш ник/i), 'Vasya');
   userEvent.type(screen.getByLabelText(/Пароль/i), 'CorrectPassword');
   userEvent.click(screen.getByRole('button', { name: /Войти/i }));
@@ -266,6 +316,7 @@ test('User should rename channel', async () => {
     .get('/api/v1/data')
     .reply(200, state);
 
+  expect(window.location.pathname).toBe('/login');
   userEvent.type(screen.getByLabelText(/Ваш ник/i), 'Vasya2');
   userEvent.type(screen.getByLabelText(/Пароль/i), 'CorrectPassword');
   userEvent.click(screen.getByRole('button', { name: /Войти/i }));
@@ -298,6 +349,7 @@ test('User should remove channel', async () => {
     .get('/api/v1/data')
     .reply(200, state);
 
+  expect(window.location.pathname).toBe('/login');
   userEvent.type(screen.getByLabelText(/Ваш ник/i), 'Vasya3');
   userEvent.type(screen.getByLabelText(/Пароль/i), 'CorrectPassword');
   userEvent.click(screen.getByRole('button', { name: /Войти/i }));
