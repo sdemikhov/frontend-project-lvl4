@@ -23,7 +23,9 @@ export default {
     channelName: Yup.string().required(),
   }),
   RegistrationFormSchema: Yup.object({
-    username: Yup.string().required().min(3).max(20),
+    username: Yup.string().required()
+      .min(3, () => ({ key: 'registerForm.usernamePlaceholder' }))
+      .max(20, () => ({ key: 'registerForm.usernamePlaceholder' })),
     password: Yup.string().required().min(6),
     passwordConfirmation: Yup.string().min(6)
       .oneOf([Yup.ref('password'), null]),
