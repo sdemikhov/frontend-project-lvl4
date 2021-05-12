@@ -4,7 +4,7 @@ export default {
       ru: 'Русский',
     },
     navbar: {
-      brand: 'Hexlet-Chat',
+      brand: 'Hexlet Chat',
       signout: 'Выйти',
       notLoggedIn: 'Вход не выполнен',
     },
