@@ -76,7 +76,7 @@ const СhannelInteractionForm = ({
   );
 };
 
-const Channels = () => {
+const Channels = (props, ref) => {
   const { t } = useTranslation();
   const dispatch = useDispatch();
   const socket = useSocket();
@@ -89,6 +89,7 @@ const Channels = () => {
 
   const handleSetCurrentChannel = (id) => () => {
     dispatch(setCurrentChannelId(id));
+    ref.current.focus();
   };
 
   const handleShowModalForChannelRename = (id, name) => (e) => {
@@ -243,4 +244,4 @@ const Channels = () => {
   );
 };
 
-export default Channels;
+export default React.forwardRef(Channels);

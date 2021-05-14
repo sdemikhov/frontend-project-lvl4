@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSelector, useDispatch } from 'react-redux';
 import Spinner from 'react-bootstrap/Spinner';
@@ -32,8 +32,11 @@ const Chat = () => {
   const loading = useSelector(({ chatData }) => chatData.loading);
   const dispatch = useDispatch();
   const { user: { token } } = useAuth();
+  const sendMessageInputRef = useRef(null);
 
   useEffect(() => {
+    sendMessageInputRef.current.focus();
+
     if (loading === 'idle') {
       dispatch(getChatData(token));
     }
@@ -42,14 +45,14 @@ const Chat = () => {
   return (
     <>
       <Col className="bg-dark border-top border-right border-secondary" md="3" xl="2">
-        <Channels />
+        <Channels ref={sendMessageInputRef} />
       </Col>
       <Col className="h-100" as="main" xl="10" md="9" xs="12">
         <div className="d-flex flex-column h-100">
           <Messages />
           <div className="mt-auto">
             <Status value={loading} />
-            <SendMessageForm />
+            <SendMessageForm ref={sendMessageInputRef} />
           </div>
         </div>
       </Col>

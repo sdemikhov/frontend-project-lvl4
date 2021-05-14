@@ -1,4 +1,4 @@
-import React, { useRef } from 'react';
+import React from 'react';
 import { useSelector } from 'react-redux';
 import { useTranslation } from 'react-i18next';
 import { Formik } from 'formik';
@@ -10,10 +10,9 @@ import { useSocket } from '../use-socket.jsx';
 import { useAuth } from '../use-auth.jsx';
 import validationSchemas from '../validators.js';
 
-const SendMessageForm = () => {
+const SendMessageForm = (props, ref) => {
   const { t } = useTranslation();
   const socket = useSocket();
-  const inputRef = useRef(null);
   const currentChannelId = useSelector(({ channels }) => channels.currentChannelId);
   const { user: { username } } = useAuth();
 
@@ -31,7 +30,7 @@ const SendMessageForm = () => {
         socket.emit('newMessage', message, () => {});
 
         actions.resetForm();
-        inputRef.current.focus();
+        ref.current.focus();
       }}
     >
       {({
@@ -50,7 +49,7 @@ const SendMessageForm = () => {
           <Form.Row>
             <Col>
               <Form.Control
-                ref={inputRef}
+                ref={ref}
                 type="text"
                 name="message"
                 value={values.message}
@@ -75,4 +74,4 @@ const SendMessageForm = () => {
   );
 };
 
-export default SendMessageForm;
+export default React.forwardRef(SendMessageForm);
