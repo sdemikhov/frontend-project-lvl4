@@ -129,6 +129,7 @@ beforeEach(async () => {
 });
 
 beforeAll(() => {
+  window.HTMLElement.prototype.scrollIntoView = () => {};
   nock.disableNetConnect();
 });
 
@@ -138,7 +139,6 @@ afterAll(() => {
 
 test('should be redirected to login page', async () => {
   expect(window.location.pathname).toBe('/login');
-
   expect(screen.getByLabelText(/Ваш ник/i)).toBeInTheDocument();
   expect(screen.getByLabelText(/Пароль/i)).toBeInTheDocument();
 });
@@ -166,17 +166,13 @@ test('should login with correct credentials or get error message', async () => {
   userEvent.type(screen.getByLabelText(/Ваш ник/i), 'WrongUsername');
   userEvent.type(screen.getByLabelText(/Пароль/i), 'WrongPassword');
   userEvent.click(screen.getByRole('button', { name: /Войти/i }));
-
   expect(screen.getByRole('button', { name: /Войти/i })).toBeDisabled();
-
   expect(await screen.findByText(/Неверные имя пользователя или пароль/i)).toBeInTheDocument();
 
   userEvent.type(screen.getByLabelText(/Ваш ник/i), 'CorrectUsername');
   userEvent.type(screen.getByLabelText(/Пароль/i), 'CorrectPassword');
   userEvent.click(screen.getByRole('button', { name: /Войти/i }));
-
   expect(screen.getByRole('button', { name: /Войти/i })).toBeDisabled();
-
   expect(await screen.findByText(/general/i)).toBeInTheDocument();
   expect(await screen.findByText(searchMessage('admin', 'welcome'))).toBeInTheDocument();
 });
@@ -373,7 +369,6 @@ test('User should remove channel', async () => {
   expect(await screen.findByRole('button', { name: /Удалить/i })).toBeInTheDocument();
 
   userEvent.click(screen.getByRole('button', { name: /Удалить/i }));
-
   await waitFor(() => {
     expect(screen.queryByText(removableChannel.name)).not.toBeInTheDocument();
   });

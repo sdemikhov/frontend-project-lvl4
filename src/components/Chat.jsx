@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSelector, useDispatch } from 'react-redux';
 import Spinner from 'react-bootstrap/Spinner';
@@ -10,31 +10,34 @@ import Channels from './Channels.jsx';
 import Messages from './Messages.jsx';
 import SendMessageForm from './SendMessageForm.jsx';
 
-const Chat = () => {
+const Status = ({ value }) => {
   const { t } = useTranslation();
+
+  switch (value) {
+    case 'pending':
+      return (
+        <>
+          <Spinner className="mr-2" animation="border" role="status" />
+          <span>{t('chat.loading')}</span>
+        </>
+      );
+    case 'rejected':
+      return <p className="text-danger">{t('errors.network.unknown')}</p>;
+    default:
+      return null;
+  }
+};
+
+const Chat = () => {
   const loading = useSelector(({ chatData }) => chatData.loading);
   const dispatch = useDispatch();
   const { user: { token } } = useAuth();
 
-  if (loading === 'idle') {
-    dispatch(getChatData(token));
-  }
-
-  const renderStatus = (loadingStatus) => {
-    switch (loadingStatus) {
-      case 'pending':
-        return (
-          <>
-            <Spinner animation="border" role="status" />
-            <span>{t('chat.loading')}</span>
-          </>
-        );
-      case 'rejected':
-        return <p className="text-danger">{t('errors.network.unknown')}</p>;
-      default:
-        return null;
+  useEffect(() => {
+    if (loading === 'idle') {
+      dispatch(getChatData(token));
     }
-  };
+  });
 
   return (
     <>
@@ -43,11 +46,9 @@ const Chat = () => {
       </Col>
       <Col className="h-100" as="main" xl="10" md="9" xs="12">
         <div className="d-flex flex-column h-100">
-          <div className="overflow-hidden">
-            <Messages />
-          </div>
+          <Messages />
           <div className="mt-auto">
-            {renderStatus()}
+            <Status value={loading} />
             <SendMessageForm />
           </div>
         </div>

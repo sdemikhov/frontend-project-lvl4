@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useRef, useEffect } from 'react';
 import { createSelector } from 'reselect';
 import { useSelector } from 'react-redux';
 
@@ -24,16 +24,25 @@ const getMessagesInCurrentChannel = createSelector(
 
 const Messages = () => {
   const messages = useSelector(getMessagesInCurrentChannel);
+  const messagesEnd = useRef(null);
+
+  useEffect(() => {
+    const { current } = messagesEnd;
+    if (current) {
+      current.scrollIntoView();
+    }
+  }, [messages]);
 
   return (
-    <>
+    <div className="overflow-auto">
       {messages.map(({ id, body, sender }) => (
         <div key={id} className="text-break">
           <b>{sender}</b>
           {`: ${body}`}
         </div>
       ))}
-    </>
+      <div ref={messagesEnd} />
+    </div>
   );
 };
 

@@ -24,7 +24,7 @@ const App = () => (
           <NavigationToolbar />
         </Col>
       </Row>
-      <Row className="flex-grow-1">
+      <Row className="flex-grow-1 h-50">
         <Switch>
           <PrivateRoute exact path={routes.mainPagePath()}>
             <Chat />
