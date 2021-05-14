@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSelector, useDispatch } from 'react-redux';
 import { Formik } from 'formik';
@@ -21,6 +21,11 @@ const СhannelInteractionForm = ({
   testid,
 }) => {
   const { t } = useTranslation();
+  const inputRef = useRef(null);
+
+  useEffect(() => {
+    inputRef.current.focus();
+  });
 
   return (
     <Formik
@@ -52,7 +57,7 @@ const СhannelInteractionForm = ({
               onBlur={handleBlur}
               disabled={isSubmitting}
               data-testid={testid}
-              autoFocus
+              ref={inputRef}
             />
           </Form.Group>
           <Form.Group className="d-flex justify-content-between">
