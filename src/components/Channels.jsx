@@ -1,6 +1,7 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useRef, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSelector, useDispatch } from 'react-redux';
+import { createSelector } from 'reselect';
 import { Formik } from 'formik';
 import cn from 'classnames';
 import Form from 'react-bootstrap/Form';
@@ -13,15 +14,39 @@ import ButtonGroup from 'react-bootstrap/ButtonGroup';
 import { useSocket } from '../use-socket.jsx';
 import validationSchemas from '../validators.js';
 import { setCurrentChannelId } from '../slices/channels-slice.js';
+import { openModal, closeModal } from '../slices/modal-slice.js';
 
-const СhannelInteractionForm = ({
-  currentName = '',
-  action,
-  onCancel,
-  testid,
-}) => {
+const getChannelIdForModal = createSelector(
+  ({ modal }) => modal.extra,
+  (extra) => {
+    if (extra) {
+      return extra.channelId;
+    }
+
+    return null;
+  },
+);
+
+const getChannelNameForModal = createSelector(
+  getChannelIdForModal,
+  ({ channels }) => channels.entities,
+  (id, entities) => {
+    if (id) {
+      return entities[id].name;
+    }
+
+    return '';
+  },
+);
+
+const СhannelInteractionForm = ({ initalName = '', testid, action }) => {
   const { t } = useTranslation();
+  const dispatch = useDispatch();
   const inputRef = useRef(null);
+
+  const onCancel = () => {
+    dispatch(closeModal());
+  };
 
   useEffect(() => {
     inputRef.current.focus();
@@ -29,7 +54,7 @@ const СhannelInteractionForm = ({
 
   return (
     <Formik
-      initialValues={{ channelName: currentName }}
+      initialValues={{ channelName: initalName }}
       validationSchema={validationSchemas.СhannelInteractionFormSchema}
       onSubmit={async ({ channelName }) => {
         action(channelName);
@@ -81,123 +106,130 @@ const СhannelInteractionForm = ({
   );
 };
 
-const Channels = (props, ref) => {
+const ChannelRemoveDialog = ({ channelId }) => {
   const { t } = useTranslation();
   const dispatch = useDispatch();
   const socket = useSocket();
+
+  const onCloseModal = () => {
+    dispatch(closeModal());
+  };
+
+  const handleRemoveChannel = (id) => () => {
+    socket.emit('removeChannel', { id }, (response) => {
+      if (response.status === 'ok') {
+        onCloseModal();
+      } else {
+        throw new Error(t('errors.network.unknown'));
+      }
+    });
+  };
+
+  return (
+    <div className="d-flex justify-content-between">
+      <Button variant="secondary" onClick={onCloseModal}>{t('modal.cancelButton')}</Button>
+      <Button variant="primary" onClick={handleRemoveChannel(channelId)}>{t('modal.removeButton')}</Button>
+    </div>
+  );
+};
+
+const ChannelModalBody = ({ type }) => {
+  const { t } = useTranslation();
+  const socket = useSocket();
+  const dispatch = useDispatch();
+
+  const channelId = useSelector(getChannelIdForModal);
+  const channelName = useSelector(getChannelNameForModal);
+
+  const onCloseModal = () => {
+    dispatch(closeModal());
+  };
+
+  const handleRenameChannel = (id) => (newName) => {
+    socket.emit('renameChannel', { id, name: newName }, (response) => {
+      if (response.status === 'ok') {
+        onCloseModal();
+      } else {
+        throw new Error(t('errors.network.unknown'));
+      }
+    });
+  };
+
+  const addChannel = (name) => {
+    socket.emit('newChannel', { name }, (response) => {
+      if (response.status === 'ok') {
+        onCloseModal();
+      } else {
+        throw new Error(t('errors.network.unknown'));
+      }
+    });
+  };
+
+  switch (type) {
+    case 'removeChannel':
+      return <ChannelRemoveDialog channelId={channelId} />;
+    case 'newChannel':
+      return <СhannelInteractionForm testid="new-channel" action={addChannel} />;
+    case 'renameChannel':
+      return (
+        <СhannelInteractionForm
+          testid="rename-channel"
+          initalName={channelName}
+          action={handleRenameChannel(channelId)}
+        />
+      );
+    default:
+      return null;
+  }
+};
+
+const ChannelModal = () => {
+  const { t } = useTranslation();
+  const dispatch = useDispatch();
+  const { isOpened, type } = useSelector(({ modal }) => modal);
+
+  const onHide = () => {
+    dispatch(closeModal());
+  };
+
+  const title = type ? t(`modal.${type}`) : null;
+
+  return (
+    <Modal show={isOpened} onHide={onHide}>
+      <Modal.Header closeButton>
+        <Modal.Title>{title}</Modal.Title>
+      </Modal.Header>
+      <Modal.Body>
+        <ChannelModalBody type={type} />
+      </Modal.Body>
+    </Modal>
+  );
+};
+
+const Channels = (props, ref) => {
+  const { t } = useTranslation();
+  const dispatch = useDispatch();
   const channels = useSelector((state) => state.channels);
   const { currentChannelId } = channels;
-
-  const [modalState, setModalState] = useState({ show: false });
-
-  const onCloseModal = () => setModalState({ ...modalState, show: false });
 
   const handleSetCurrentChannel = (id) => () => {
     dispatch(setCurrentChannelId(id));
     ref.current.focus();
   };
 
-  const handleShowModalForChannelRename = (id, name) => (e) => {
+  const handleShowModalForChannelRename = (id) => (e) => {
     e.preventDefault();
-
-    const cb = (newName) => {
-      socket.emit('renameChannel', { id, name: newName }, (response) => {
-        if (response.status === 'ok') {
-          onCloseModal();
-        } else {
-          setModalState(
-            {
-              ...modalState,
-              body: (<p className="text-danger">{t('errors.network.unknown')}</p>),
-            },
-          );
-        }
-      });
-    };
-
-    const newModalBodyDOM = (
-      <СhannelInteractionForm
-        currentName={name}
-        action={cb}
-        onCancel={onCloseModal}
-        testid="rename-channel"
-      />
-    );
-
-    const newModalState = {
-      show: true,
-      title: t('modal.titles.renameChannel'),
-      body: newModalBodyDOM,
-    };
-
-    setModalState(newModalState);
+    dispatch(openModal({ isOpened: true, type: 'renameChannel', extra: { channelId: id } }));
   };
 
   const handleShowModalForChannelRemove = (id) => (e) => {
     e.preventDefault();
-
-    const onRemoveChannel = () => {
-      socket.emit('removeChannel', { id }, (response) => {
-        if (response.status === 'ok') {
-          onCloseModal();
-        } else {
-          setModalState(
-            {
-              ...modalState,
-              body: (<p className="text-danger">{t('errors.network.unknown')}</p>),
-            },
-          );
-        }
-      });
-    };
-
-    const newModalBodyDOM = (
-      <div className="d-flex justify-content-between">
-        <Button variant="secondary" onClick={onCloseModal}>{t('modal.cancelButton')}</Button>
-        <Button variant="primary" onClick={onRemoveChannel}>{t('modal.removeButton')}</Button>
-      </div>
-    );
-
-    const newModalState = {
-      show: true,
-      title: t('modal.titles.removeChannel'),
-      body: newModalBodyDOM,
-    };
-
-    setModalState(newModalState);
+    dispatch(openModal({ isOpened: true, type: 'removeChannel', extra: { channelId: id } }));
   };
 
-  const handleShowModalForChannelAdd = () => {
-    const cb = (channelName) => {
-      socket.emit('newChannel', { name: channelName }, (response) => {
-        if (response.status === 'ok') {
-          onCloseModal();
-        } else {
-          setModalState(
-            {
-              ...modalState,
-              body: (<p className="text-danger">{t('errors.network.unknown')}</p>),
-            },
-          );
-        }
-      });
-    };
-
-    const newModalBodyDOM = (
-      <СhannelInteractionForm
-        action={cb}
-        onCancel={onCloseModal}
-        testid="new-channel"
-      />
-    );
-
-    const newModalState = {
-      show: true,
-      title: t('modal.titles.newChannel'),
-      body: newModalBodyDOM,
-    };
-
-    setModalState(newModalState);
+  const onShowModalForChannelAdd = (e) => {
+    e.preventDefault();
+    dispatch(openModal({ isOpened: true, type: 'newChannel', extra: null }));
   };
 
   return (
@@ -205,7 +237,7 @@ const Channels = (props, ref) => {
       <Nav className="flex-column">
         <div className="d-flex justify-content-between align-items-baseline">
           <span className="text-secondary">Каналы:</span>
-          <Button onClick={handleShowModalForChannelAdd} variant="dark" size="sm">{t('channelsNav.addButton')}</Button>
+          <Button onClick={onShowModalForChannelAdd} variant="dark" size="sm">{t('channelsNav.addButton')}</Button>
         </div>
         {React.Children.map(channels.ids, (id) => {
           const channelClass = cn({
@@ -226,7 +258,7 @@ const Channels = (props, ref) => {
                   <Dropdown.Toggle split variant="dark" id={dropdownId} data-testid={dropdowntestId} />
 
                   <Dropdown.Menu>
-                    <Dropdown.Item onClick={handleShowModalForChannelRename(id, channel.name)}>{t('channelsNav.dropdownRename')}</Dropdown.Item>
+                    <Dropdown.Item onClick={handleShowModalForChannelRename(id)}>{t('channelsNav.dropdownRename')}</Dropdown.Item>
                     <Dropdown.Item onClick={handleShowModalForChannelRemove(id)}>{t('channelsNav.dropdownRemove')}</Dropdown.Item>
                   </Dropdown.Menu>
                 </Dropdown>
@@ -237,14 +269,7 @@ const Channels = (props, ref) => {
           );
         })}
       </Nav>
-      <Modal show={modalState.show} onHide={onCloseModal}>
-        <Modal.Header closeButton>
-          <Modal.Title>{modalState.title}</Modal.Title>
-        </Modal.Header>
-        <Modal.Body>
-          {modalState.body}
-        </Modal.Body>
-      </Modal>
+      <ChannelModal />
     </>
   );
 };

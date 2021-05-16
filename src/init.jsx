@@ -16,6 +16,7 @@ import channelsReducer, {
   newChannel,
 } from './slices/channels-slice.js';
 import messagesReducer, { newMessage } from './slices/messages-slice.js';
+import modalReducer from './slices/modal-slice.js';
 import App from './components/App.jsx';
 
 export default (socketInstance) => {
@@ -30,6 +31,7 @@ export default (socketInstance) => {
         chatData: chatDataReducer,
         channels: channelsReducer,
         messages: messagesReducer,
+        modal: modalReducer,
       },
     });
 
