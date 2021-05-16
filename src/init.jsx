@@ -6,8 +6,8 @@ import { I18nextProvider } from 'react-i18next';
 import { configureStore } from '@reduxjs/toolkit';
 import { Provider as StoreProvider } from 'react-redux';
 
-import { ProvideAuth } from './use-auth.jsx';
-import { SocketProvider } from './use-socket.jsx';
+import { ProvideAuth } from './auth.jsx';
+import { SocketProvider } from './socket.jsx';
 import resources from './locales/locales.js';
 import chatDataReducer from './slices/chat-data-slice.js';
 import channelsReducer, {

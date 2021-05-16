@@ -7,9 +7,9 @@ import Alert from 'react-bootstrap/Alert';
 import axios from 'axios';
 import { useHistory, useLocation } from 'react-router-dom';
 
-import validationSchemas from '../validators.js';
+import validationSchemas from '../validation-schemas.js';
 import routes from '../routes.js';
-import { useAuth } from '../use-auth.jsx';
+import { useAuth } from '../auth.jsx';
 
 const LoginForm = () => {
   const { t } = useTranslation();

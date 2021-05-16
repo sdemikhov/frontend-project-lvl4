@@ -14,7 +14,17 @@ const channelsSlice = createSlice({
     setCurrentChannelId(state, action) {
       state.currentChannelId = action.payload;
     },
-    removeChannel: channelsAdapter.removeOne,
+    removeChannel: (state, action) => {
+      const { currentChannelId, ids } = state;
+      const id = action.payload;
+
+      if (currentChannelId === id) {
+        const firstChannelId = ids[0];
+        state.currentChannelId = firstChannelId;
+      }
+
+      channelsAdapter.removeOne(state, action);
+    },
     renameChannel: channelsAdapter.updateOne,
     newChannel: channelsAdapter.addOne,
   },

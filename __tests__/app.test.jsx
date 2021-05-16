@@ -249,6 +249,18 @@ test('User should type new message to default channel', async () => {
   userEvent.click(screen.getByRole('button', { name: /Войти/i }));
 
   await screen.findByText(/general/i);
+  expect(screen.getByTestId('new-message')).toHaveAttribute('value', '');
+
+  userEvent.click(screen.getByRole('button', { name: /Отправить/i }));
+  await waitFor(() => {
+    expect(screen.queryByText(/Vasyan/i)).not.toBeInTheDocument();
+  });
+
+  userEvent.type(screen.getByTestId('new-message'), ' ');
+  userEvent.click(screen.getByRole('button', { name: /Отправить/i }));
+  await waitFor(() => {
+    expect(screen.queryByText(/Vasyan/i)).not.toBeInTheDocument();
+  });
 
   userEvent.type(screen.getByTestId('new-message'), 'Hello');
   userEvent.click(screen.getByRole('button', { name: /Отправить/i }));
@@ -277,11 +289,11 @@ test('User should change the channel and type new message', async () => {
     'text-light font-weight-bold btn btn-dark',
     { exact: true },
   );
+  expect(screen.getByTestId('new-message')).toHaveAttribute('value', '');
 
   userEvent.type(screen.getByTestId('new-message'), 'Message in random chat');
   userEvent.click(screen.getByRole('button', { name: /Отправить/i }));
   expect(screen.getByRole('button', { name: /Отправить/i })).toBeDisabled();
-
   expect(await screen.findByText(searchMessage('Vasya1', 'Message in random chat'))).toBeInTheDocument();
 });
 
@@ -302,10 +314,31 @@ test('User should create new channel', async () => {
 
   userEvent.click(screen.getByRole('button', { name: /Новый\.\.\./i }));
   expect(await screen.findByTestId('new-channel')).toBeInTheDocument();
+  expect(screen.getByText(/Создать канал/i)).toBeVisible();
+  expect(screen.getByTestId('new-channel')).toHaveAttribute('value', '');
 
+  userEvent.click(screen.getByRole('button', { name: /Отправить/i }));
+  expect(await screen.findByText(/Обязательное поле/i)).toBeVisible();
+
+  userEvent.clear(screen.getByTestId('new-channel'));
+  userEvent.type(screen.getByTestId('new-channel'), ' ');
+  userEvent.click(screen.getByRole('button', { name: /Отправить/i }));
+  expect(await screen.findByText(/Обязательное поле/i)).toBeVisible();
+
+  userEvent.clear(screen.getByTestId('new-channel'));
+  userEvent.type(screen.getByTestId('new-channel'), 'aa');
+  userEvent.click(screen.getByRole('button', { name: /Отправить/i }));
+  expect(await screen.findByText(/От 3 до 20 символов/i)).toBeVisible();
+
+  userEvent.clear(screen.getByTestId('new-channel'));
+  userEvent.type(screen.getByTestId('new-channel'), _.repeat('a', 21));
+  userEvent.click(screen.getByRole('button', { name: /Отправить/i }));
+  expect(await screen.findByText(/От 3 до 20 символов/i)).toBeVisible();
+
+  userEvent.clear(screen.getByTestId('new-channel'));
   userEvent.type(screen.getByTestId('new-channel'), 'CustomNewChannel');
   userEvent.click(screen.getByRole('button', { name: /Отправить/i }));
-  expect(await screen.findByRole('button', { name: /Отправить/i })).toBeDisabled();
+  expect(screen.getByRole('button', { name: /Отправить/i })).toBeDisabled();
   expect(await screen.findByText(/CustomNewChannel/i)).toBeInTheDocument();
 });
 
@@ -335,11 +368,27 @@ test('User should rename channel', async () => {
   userEvent.click(screen.getByText(/Переименовать/i));
   expect(await screen.findByTestId('rename-channel')).toBeInTheDocument();
   expect(screen.getByTestId('rename-channel')).toHaveDisplayValue(removableChannel.name);
+  expect(screen.getByText(/Переименовать канал/i)).toBeVisible();
 
-  userEvent.type(screen.getByTestId('rename-channel'), 'WithNewName');
+  userEvent.clear(screen.getByTestId('rename-channel'));
   userEvent.click(screen.getByRole('button', { name: /Отправить/i }));
-  expect(await screen.findByRole('button', { name: /Отправить/i })).toBeDisabled();
-  expect(await screen.findByText('removableChannelWithNewName')).toBeInTheDocument();
+  expect(await screen.findByText(/Обязательное поле/i)).toBeVisible();
+
+  userEvent.clear(screen.getByTestId('rename-channel'));
+  userEvent.type(screen.getByTestId('rename-channel'), 'aa');
+  userEvent.click(screen.getByRole('button', { name: /Отправить/i }));
+  expect(await screen.findByText(/От 3 до 20 символов/i)).toBeVisible();
+
+  userEvent.clear(screen.getByTestId('rename-channel'));
+  userEvent.type(screen.getByTestId('rename-channel'), _.repeat('a', 21));
+  userEvent.click(screen.getByRole('button', { name: /Отправить/i }));
+  expect(await screen.findByText(/От 3 до 20 символов/i)).toBeVisible();
+
+  userEvent.clear(screen.getByTestId('rename-channel'));
+  userEvent.type(screen.getByTestId('rename-channel'), 'NewName');
+  userEvent.click(screen.getByRole('button', { name: /Отправить/i }));
+  expect(screen.getByRole('button', { name: /Отправить/i })).toBeDisabled();
+  expect(await screen.findByText('NewName')).toBeInTheDocument();
 });
 
 test('User should remove channel', async () => {
@@ -349,6 +398,23 @@ test('User should remove channel', async () => {
   const dropdownTestId = `dropdown-channelId-${removableChannel.id}`;
 
   state.channels.push(removableChannel);
+  state.messages.push(
+    {
+      id: getNextId(),
+      channelId: state.currentChannelId,
+      sender: 'admin',
+      body: 'messageInGeneralChannel',
+    },
+  );
+
+  state.messages.push(
+    {
+      id: getNextId(),
+      channelId: removableChannel.id,
+      sender: 'admin',
+      body: 'messageInRemovableChannel',
+    },
+  );
 
   nock(host)
     .post('/api/v1/login')
@@ -362,14 +428,20 @@ test('User should remove channel', async () => {
   userEvent.click(screen.getByRole('button', { name: /Войти/i }));
   expect(await screen.findByTestId(dropdownTestId)).toBeInTheDocument();
 
+  userEvent.click(await screen.findByRole('button', { name: /removableChannel/i }));
+  expect(await screen.findByText(searchMessage('admin', 'messageInRemovableChannel'))).toBeInTheDocument();
+
   userEvent.click(screen.getByTestId(dropdownTestId));
   expect(await screen.findByText(/Удалить/i)).toBeInTheDocument();
 
   userEvent.click(screen.getByText(/Удалить/i));
   expect(await screen.findByRole('button', { name: /Удалить/i })).toBeInTheDocument();
+  expect(screen.getByText(/Удалить канал/i)).toBeVisible();
 
   userEvent.click(screen.getByRole('button', { name: /Удалить/i }));
   await waitFor(() => {
-    expect(screen.queryByText(removableChannel.name)).not.toBeInTheDocument();
+    expect(screen.queryByText(/removableChannel/i)).not.toBeInTheDocument();
+    expect(screen.queryByText(searchMessage('admin', 'messageInRemovableChannel'))).not.toBeInTheDocument();
+    expect(screen.getByText(searchMessage('admin', 'messageInGeneralChannel'))).toBeInTheDocument();
   });
 });

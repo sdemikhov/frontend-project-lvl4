@@ -11,8 +11,8 @@ import Dropdown from 'react-bootstrap/Dropdown';
 import Modal from 'react-bootstrap/Modal';
 import ButtonGroup from 'react-bootstrap/ButtonGroup';
 
-import { useSocket } from '../use-socket.jsx';
-import validationSchemas from '../validators.js';
+import { useSocket } from '../socket.jsx';
+import validationSchemas from '../validation-schemas.js';
 import { setCurrentChannelId } from '../slices/channels-slice.js';
 import { openModal, closeModal } from '../slices/modal-slice.js';
 
@@ -55,9 +55,9 @@ const СhannelInteractionForm = ({ initalName = '', testid, action }) => {
   return (
     <Formik
       initialValues={{ channelName: initalName }}
-      validationSchema={validationSchemas.СhannelInteractionFormSchema}
-      onSubmit={async ({ channelName }) => {
-        action(channelName);
+      validationSchema={validationSchemas.ChannelIteractionFormSchema}
+      onSubmit={({ channelName }, { setSubmitting }) => {
+        action(channelName, () => setSubmitting(false));
       }}
     >
       {({
@@ -66,6 +66,8 @@ const СhannelInteractionForm = ({ initalName = '', testid, action }) => {
         handleBlur,
         values,
         isSubmitting,
+        errors,
+        touched,
       }) => (
         <Form
           noValidate
@@ -83,7 +85,11 @@ const СhannelInteractionForm = ({ initalName = '', testid, action }) => {
               disabled={isSubmitting}
               data-testid={testid}
               ref={inputRef}
+              isInvalid={touched.channelName && !!errors.channelName}
             />
+            <Form.Control.Feedback type="invalid">
+              {errors.channelName && t(errors.channelName.key)}
+            </Form.Control.Feedback>
           </Form.Group>
           <Form.Group className="d-flex justify-content-between">
             <Button
@@ -145,9 +151,10 @@ const ChannelModalBody = ({ type }) => {
     dispatch(closeModal());
   };
 
-  const handleRenameChannel = (id) => (newName) => {
+  const handleRenameChannel = (id) => (newName, cb) => {
     socket.emit('renameChannel', { id, name: newName }, (response) => {
       if (response.status === 'ok') {
+        cb();
         onCloseModal();
       } else {
         throw new Error(t('errors.network.unknown'));
@@ -155,9 +162,10 @@ const ChannelModalBody = ({ type }) => {
     });
   };
 
-  const addChannel = (name) => {
+  const addChannel = (name, cb) => {
     socket.emit('newChannel', { name }, (response) => {
       if (response.status === 'ok') {
+        cb();
         onCloseModal();
       } else {
         throw new Error(t('errors.network.unknown'));
@@ -192,7 +200,7 @@ const ChannelModal = () => {
     dispatch(closeModal());
   };
 
-  const title = type ? t(`modal.${type}`) : null;
+  const title = type ? t(`modal.titles.${type}`) : null;
 
   return (
     <Modal show={isOpened} onHide={onHide}>

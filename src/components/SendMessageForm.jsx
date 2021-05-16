@@ -6,9 +6,9 @@ import Col from 'react-bootstrap/Col';
 import Form from 'react-bootstrap/Form';
 import Button from 'react-bootstrap/Button';
 
-import { useSocket } from '../use-socket.jsx';
-import { useAuth } from '../use-auth.jsx';
-import validationSchemas from '../validators.js';
+import { useSocket } from '../socket.jsx';
+import { useAuth } from '../auth.jsx';
+import validationSchemas from '../validation-schemas.js';
 
 const SendMessageForm = (props, ref) => {
   const { t } = useTranslation();
@@ -20,14 +20,16 @@ const SendMessageForm = (props, ref) => {
     <Formik
       initialValues={{ message: '' }}
       validationSchema={validationSchemas.MessageFormSchema}
-      onSubmit={async (values, actions) => {
+      onSubmit={(values, actions) => {
         const message = {
           channelId: currentChannelId,
           body: values.message,
           sender: username,
         };
 
-        socket.emit('newMessage', message, () => {});
+        socket.emit('newMessage', message, () => {
+          actions.setSubmitting(false);
+        });
 
         actions.resetForm();
         ref.current.focus();

@@ -4,7 +4,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import Spinner from 'react-bootstrap/Spinner';
 import Col from 'react-bootstrap/Col';
 
-import { useAuth } from '../use-auth.jsx';
+import { useAuth } from '../auth.jsx';
 import { getChatData } from '../slices/chat-data-slice.js';
 import Channels from './Channels.jsx';
 import Messages from './Messages.jsx';

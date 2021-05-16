@@ -11,17 +11,19 @@ Yup.setLocale({
 
 export default {
   LoginFormSchema: Yup.object({
-    username: Yup.string().required(),
+    username: Yup.string().trim().required(),
     password: Yup.string().required(),
   }),
   MessageFormSchema: Yup.object({
-    message: Yup.string().required(),
+    message: Yup.string().trim().required(),
   }),
   ChannelIteractionFormSchema: Yup.object({
-    channelName: Yup.string().required(),
+    channelName: Yup.string().trim().required()
+      .min(3, () => ({ key: 'validation.channelName' }))
+      .max(20, () => ({ key: 'validation.channelName' })),
   }),
   RegistrationFormSchema: Yup.object({
-    username: Yup.string().required()
+    username: Yup.string().trim().required()
       .min(3, () => ({ key: 'validation.username' }))
       .max(20, () => ({ key: 'validation.username' })),
     password: Yup.string().required().min(6),

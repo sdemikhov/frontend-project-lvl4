@@ -48,13 +48,14 @@ export default {
       cancelButton: 'Отменить',
     },
     validation: {
-      required: 'Поле обязательно к заполнению',
+      required: 'Обязательное поле',
       min_0: 'Не менее {{count}} символ',
       min_1: 'Не менее {{count}} символа',
       min_2: 'Не менее {{count}} символов',
       username: 'От 3 до 20 символов',
       password: 'Не менее 6 символов',
       passwordConfirmation: 'Пароли должны совпадать',
+      channelName: 'От 3 до 20 символов',
     },
     errors: {
       network: {

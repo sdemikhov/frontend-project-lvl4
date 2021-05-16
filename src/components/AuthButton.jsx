@@ -3,7 +3,7 @@ import { useHistory } from 'react-router-dom';
 import Button from 'react-bootstrap/Button';
 import { useTranslation } from 'react-i18next';
 
-import { useAuth } from '../use-auth.jsx';
+import { useAuth } from '../auth.jsx';
 import routes from '../routes.js';
 
 const AuthButton = () => {
