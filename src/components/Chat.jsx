@@ -10,37 +10,36 @@ import Channels from './Channels.jsx';
 import Messages from './Messages.jsx';
 import SendMessageForm from './SendMessageForm.jsx';
 
-const Status = ({ value }) => {
-  const { t } = useTranslation();
-
-  switch (value) {
-    case 'pending':
-      return (
-        <>
-          <Spinner className="mr-2" animation="border" role="status" />
-          <span>{t('chat.loading')}</span>
-        </>
-      );
-    case 'rejected':
-      return <p className="text-danger">{t('errors.network.unknown')}</p>;
-    default:
-      return null;
-  }
-};
-
 const Chat = () => {
   const loading = useSelector(({ chatData }) => chatData.loading);
   const dispatch = useDispatch();
+  const { t } = useTranslation();
   const { user: { token } } = useAuth();
   const sendMessageInputRef = useRef(null);
 
   useEffect(() => {
-    sendMessageInputRef.current.focus();
-
-    if (loading === 'idle') {
-      dispatch(getChatData(token));
+    if (sendMessageInputRef.current) {
+      sendMessageInputRef.current.focus();
     }
   });
+
+  if (loading === 'idle') {
+    dispatch(getChatData(token));
+    return (
+      <Col>
+        <Spinner className="mr-2" animation="border" role="status" />
+        <span>{t('chat.loading')}</span>
+      </Col>
+    );
+  }
+
+  if (loading === 'rejected') {
+    return (
+      <Col>
+        <p className="text-danger">{t('errors.network.unknown')}</p>
+      </Col>
+    );
+  }
 
   return (
     <>
@@ -51,7 +50,6 @@ const Chat = () => {
         <div className="d-flex flex-column h-100">
           <Messages />
           <div className="mt-auto">
-            <Status value={loading} />
             <SendMessageForm ref={sendMessageInputRef} />
           </div>
         </div>
