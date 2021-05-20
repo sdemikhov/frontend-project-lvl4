@@ -47,6 +47,7 @@
     "pino-pretty": "^4.7.1",
     "point-of-view": "^4.14.0",
     "popper.js": "^1.16.1",
+    "process": "^0.11.10",
     "pug": "^3.0.2",
     "react": "^17.0.2",
     "react-bootstrap": "^1.5.2",
