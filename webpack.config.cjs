@@ -23,8 +23,8 @@ module.exports = {
   },
   plugins: [
     new MiniCssExtractPlugin(),
-    new webpack.ProvidePlugin({
-      process: 'process/browser',
+    new webpack.DefinePlugin({
+      'process.env.ROLLBAR_ACCESS_TOKEN': JSON.stringify(process.env.ROLLBAR_ACCESS_TOKEN),
     }),
   ],
   module: {
