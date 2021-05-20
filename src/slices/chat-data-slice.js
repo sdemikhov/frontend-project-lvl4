@@ -1,3 +1,4 @@
+/* eslint-disable no-param-reassign, */
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import axios from 'axios';
 
@@ -18,16 +19,19 @@ const chatDataSlice = createSlice(
   {
     name: 'chatData',
     initialState: { loading: 'idle', error: null },
-    reducers: {},
+    reducers: {
+      setLoading: (state, action) => {
+        state.loading = action.payload;
+      },
+    },
     extraReducers: {
       [getChatData.pending]: (state) => ({ ...state, loading: 'pending' }),
       [getChatData.fulfilled]: (state) => ({ ...state, loading: 'fulfilled' }),
-      [getChatData.rejected]: (state, action) => {
-        console.log(action.error);
-        return { ...state, loading: 'rejected', error: action.error };
-      },
+      [getChatData.rejected]: (state) => ({ ...state, loading: 'rejected' }),
     },
   },
 );
+
+export const { setLoading } = chatDataSlice.actions;
 
 export default chatDataSlice.reducer;

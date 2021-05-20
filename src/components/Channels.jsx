@@ -7,30 +7,70 @@ import Nav from 'react-bootstrap/Nav';
 import Dropdown from 'react-bootstrap/Dropdown';
 import ButtonGroup from 'react-bootstrap/ButtonGroup';
 
-import { setCurrentChannelId } from '../slices/channels-slice.js';
+import {
+  setCurrentChannelId,
+  selectById,
+  selectIds,
+} from '../slices/channels-slice.js';
 import { openModal } from '../slices/modal-slice.js';
 import ChannelModal from './ChannelModal.jsx';
+
+const Channel = React.forwardRef(
+  ({ id }, ref) => {
+    const dispatch = useDispatch();
+    const { t } = useTranslation();
+
+    const onSetCurrentChannel = () => {
+      dispatch(setCurrentChannelId(id));
+      ref.current.focus();
+    };
+
+    const onShowModalForChannelRename = (e) => {
+      e.preventDefault();
+      dispatch(openModal({ isOpened: true, type: 'renameChannel', extra: { channelId: id } }));
+    };
+
+    const onShowModalForChannelRemove = (e) => {
+      e.preventDefault();
+      dispatch(openModal({ isOpened: true, type: 'removeChannel', extra: { channelId: id } }));
+    };
+
+    const currentChannelId = useSelector((state) => state.channels.currentChannelId);
+    const channel = useSelector((state) => selectById(state, id));
+
+    const channelClass = cn({
+      'text-light': id === currentChannelId,
+      'font-weight-bold': id === currentChannelId,
+      'text-secondary': id !== currentChannelId,
+    });
+    const dropdowntestId = `dropdown-channelId-${channel.id}`;
+    const dropdownId = `channel-${channel.name}-context`;
+
+    return (
+      <Nav.Item>
+        {channel.removable ? (
+          <Dropdown as={ButtonGroup}>
+            <Button variant="dark" className={channelClass} onClick={onSetCurrentChannel}>{channel.name}</Button>
+
+            <Dropdown.Toggle split variant="dark" id={dropdownId} data-testid={dropdowntestId} />
+
+            <Dropdown.Menu>
+              <Dropdown.Item onClick={onShowModalForChannelRename}>{t('channelsNav.dropdownRename')}</Dropdown.Item>
+              <Dropdown.Item onClick={onShowModalForChannelRemove}>{t('channelsNav.dropdownRemove')}</Dropdown.Item>
+            </Dropdown.Menu>
+          </Dropdown>
+        ) : (
+          <Button variant="dark" className={channelClass} onClick={onSetCurrentChannel}>{channel.name}</Button>
+        )}
+      </Nav.Item>
+    );
+  },
+);
 
 const Channels = (props, ref) => {
   const { t } = useTranslation();
   const dispatch = useDispatch();
-  const channels = useSelector((state) => state.channels);
-  const { currentChannelId } = channels;
-
-  const handleSetCurrentChannel = (id) => () => {
-    dispatch(setCurrentChannelId(id));
-    ref.current.focus();
-  };
-
-  const handleShowModalForChannelRename = (id) => (e) => {
-    e.preventDefault();
-    dispatch(openModal({ isOpened: true, type: 'renameChannel', extra: { channelId: id } }));
-  };
-
-  const handleShowModalForChannelRemove = (id) => (e) => {
-    e.preventDefault();
-    dispatch(openModal({ isOpened: true, type: 'removeChannel', extra: { channelId: id } }));
-  };
+  const channelsIds = useSelector(selectIds);
 
   const onShowModalForChannelAdd = (e) => {
     e.preventDefault();
@@ -44,35 +84,7 @@ const Channels = (props, ref) => {
           <span className="text-secondary">Каналы:</span>
           <Button onClick={onShowModalForChannelAdd} variant="dark" size="sm">{t('channelsNav.addButton')}</Button>
         </div>
-        {React.Children.map(channels.ids, (id) => {
-          const channelClass = cn({
-            'text-light': id === currentChannelId,
-            'font-weight-bold': id === currentChannelId,
-            'text-secondary': id !== currentChannelId,
-          });
-          const channel = channels.entities[id];
-          const dropdowntestId = `dropdown-channelId-${channel.id}`;
-          const dropdownId = `channel-${channel.name}-context`;
-
-          return (
-            <Nav.Item key={id}>
-              {channel.removable ? (
-                <Dropdown as={ButtonGroup}>
-                  <Button variant="dark" className={channelClass} onClick={handleSetCurrentChannel(id)}>{channel.name}</Button>
-
-                  <Dropdown.Toggle split variant="dark" id={dropdownId} data-testid={dropdowntestId} />
-
-                  <Dropdown.Menu>
-                    <Dropdown.Item onClick={handleShowModalForChannelRename(id)}>{t('channelsNav.dropdownRename')}</Dropdown.Item>
-                    <Dropdown.Item onClick={handleShowModalForChannelRemove(id)}>{t('channelsNav.dropdownRemove')}</Dropdown.Item>
-                  </Dropdown.Menu>
-                </Dropdown>
-              ) : (
-                <Button variant="dark" className={channelClass} onClick={handleSetCurrentChannel(id)}>{channel.name}</Button>
-              )}
-            </Nav.Item>
-          );
-        })}
+        {React.Children.map(channelsIds, (id) => <Channel key={id} id={id} ref={ref} />)}
       </Nav>
       <ChannelModal />
     </>

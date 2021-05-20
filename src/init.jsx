@@ -20,10 +20,6 @@ import modalReducer from './slices/modal-slice.js';
 import App from './components/App.jsx';
 
 export default (socketInstance) => {
-  if (process.env.NODE_ENV !== 'production') {
-    localStorage.debug = 'chat:*';
-  }
-
   const i18nextInstance = i18n.createInstance();
   return i18nextInstance.init({ lng: 'ru', resources }).then(() => {
     const store = configureStore({

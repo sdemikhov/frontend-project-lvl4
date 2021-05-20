@@ -2,12 +2,17 @@ import React, { useRef, useEffect } from 'react';
 import { createSelector } from 'reselect';
 import { useSelector } from 'react-redux';
 
-const getCurrentChannelId = ({ channels }) => channels.currentChannelId;
+import {
+  selectIds,
+  selectEntities,
+} from '../slices/messages-slice.js';
+import { selectCurrentChannelId } from '../slices/channels-slice.js';
 
 const getMessagesInCurrentChannel = createSelector(
-  (state) => state.messages,
-  getCurrentChannelId,
-  ({ ids, entities }, currentChannelId) => {
+  selectIds,
+  selectEntities,
+  selectCurrentChannelId,
+  (ids, entities, currentChannelId) => {
     const messagesInCurrentChannel = ids.reduce((acc, id) => {
       const message = entities[id];
 
