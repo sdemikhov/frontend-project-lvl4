@@ -16,7 +16,7 @@ const RegisterForm = () => {
   const history = useHistory();
   const auth = useAuth();
 
-  return auth.user.token ? (
+  return auth.isAuthorized() ? (
     <h1>{t('registerForm.alreadyLoggedIn')}</h1>
   ) : (
     <Formik

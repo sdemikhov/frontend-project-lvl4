@@ -10,11 +10,9 @@ if (process.env.NODE_ENV !== 'production') {
   localStorage.debug = 'chat:*';
 }
 
-const rollbarAccessToken = process.env.ROLLBAR_ACCESS_TOKEN;
-
 if (process.env.NODE_ENV === 'production') {
   const rollbar = new Rollbar({
-    accessToken: rollbarAccessToken,
+    accessToken: process.env.ROLLBAR_ACCESS_TOKEN,
     captureUncaught: true,
     captureUnhandledRejections: true,
     environment: 'production',

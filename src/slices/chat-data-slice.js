@@ -18,16 +18,17 @@ export const getChatData = createAsyncThunk(
 const chatDataSlice = createSlice(
   {
     name: 'chatData',
-    initialState: { loading: 'idle', error: null },
+    initialState: { loading: 'idle' },
     reducers: {
       setLoading: (state, action) => {
         state.loading = action.payload;
       },
     },
-    extraReducers: {
-      [getChatData.pending]: (state) => ({ ...state, loading: 'pending' }),
-      [getChatData.fulfilled]: (state) => ({ ...state, loading: 'fulfilled' }),
-      [getChatData.rejected]: (state) => ({ ...state, loading: 'rejected' }),
+    extraReducers: (builder) => {
+      builder
+        .addCase(getChatData.pending, (state) => ({ ...state, loading: 'pending' }))
+        .addCase(getChatData.fulfilled, (state) => ({ ...state, loading: 'fulfilled' }))
+        .addCase(getChatData.rejected, (state) => ({ ...state, loading: 'rejected' }));
     },
   },
 );

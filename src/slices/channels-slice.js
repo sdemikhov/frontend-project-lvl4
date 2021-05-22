@@ -28,13 +28,14 @@ const channelsSlice = createSlice({
     renameChannel: channelsAdapter.updateOne,
     newChannel: channelsAdapter.addOne,
   },
-  extraReducers: {
-    [getChatData.fulfilled]: (state, action) => {
-      const { channels, currentChannelId } = action.payload;
+  extraReducers: (builder) => {
+    builder
+      .addCase(getChatData.fulfilled, (state, action) => {
+        const { channels, currentChannelId } = action.payload;
 
-      channelsAdapter.upsertMany(state, channels);
-      state.currentChannelId = currentChannelId;
-    },
+        channelsAdapter.upsertMany(state, channels);
+        state.currentChannelId = currentChannelId;
+      });
   },
 });
 

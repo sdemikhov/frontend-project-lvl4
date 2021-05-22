@@ -15,7 +15,7 @@ const PrivateRoute = ({ children, path, exact }) => {
       exact={exact}
       path={path}
       render={({ location }) => (
-        auth.user.token ? (
+        auth.isAuthorized() ? (
           children
         ) : (
           <Redirect

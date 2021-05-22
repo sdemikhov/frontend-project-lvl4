@@ -158,7 +158,7 @@ test('should login with correct credentials or get error message', async () => {
     .post('/api/v1/login')
     .reply(401)
     .post('/api/v1/login')
-    .reply(200, { token: 'JWT' })
+    .reply(200, { username: 'CorrectUsername', token: 'JWT' })
     .get('/api/v1/data')
     .reply(200, state);
 

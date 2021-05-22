@@ -74,7 +74,7 @@ const Channels = (props, ref) => {
 
   const onShowModalForChannelAdd = (e) => {
     e.preventDefault();
-    dispatch(openModal({ isOpened: true, type: 'newChannel', extra: null }));
+    dispatch(openModal({ type: 'newChannel', extra: null }));
   };
 
   return (

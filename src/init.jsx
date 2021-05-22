@@ -19,56 +19,56 @@ import messagesReducer, { newMessage } from './slices/messages-slice.js';
 import modalReducer from './slices/modal-slice.js';
 import App from './components/App.jsx';
 
-export default (socketInstance) => {
+export default async (socketInstance) => {
   const i18nextInstance = i18n.createInstance();
-  return i18nextInstance.init({ lng: 'ru', resources }).then(() => {
-    const store = configureStore({
-      reducer: {
-        chatData: chatDataReducer,
-        channels: channelsReducer,
-        messages: messagesReducer,
-        modal: modalReducer,
-      },
-    });
+  await i18nextInstance.init({ lng: 'ru', resources });
 
-    socketInstance.on(
-      'newMessage',
-      (message) => {
-        store.dispatch(newMessage(message));
-      },
-    );
-
-    socketInstance.on(
-      'newChannel',
-      (channel) => {
-        store.dispatch(newChannel(channel));
-      },
-    );
-
-    socketInstance.on(
-      'renameChannel',
-      (channel) => {
-        store.dispatch(renameChannel({ id: channel.id, changes: { ...channel } }));
-      },
-    );
-
-    socketInstance.on(
-      'removeChannel',
-      ({ id }) => {
-        store.dispatch(removeChannel(id));
-      },
-    );
-
-    return (
-      <SocketProvider socket={socketInstance}>
-        <I18nextProvider i18n={i18nextInstance}>
-          <StoreProvider store={store}>
-            <ProvideAuth>
-              <App />
-            </ProvideAuth>
-          </StoreProvider>
-        </I18nextProvider>
-      </SocketProvider>
-    );
+  const store = configureStore({
+    reducer: {
+      chatData: chatDataReducer,
+      channels: channelsReducer,
+      messages: messagesReducer,
+      modal: modalReducer,
+    },
   });
+
+  socketInstance.on(
+    'newMessage',
+    (message) => {
+      store.dispatch(newMessage(message));
+    },
+  );
+
+  socketInstance.on(
+    'newChannel',
+    (channel) => {
+      store.dispatch(newChannel(channel));
+    },
+  );
+
+  socketInstance.on(
+    'renameChannel',
+    (channel) => {
+      store.dispatch(renameChannel({ id: channel.id, changes: { ...channel } }));
+    },
+  );
+
+  socketInstance.on(
+    'removeChannel',
+    ({ id }) => {
+      store.dispatch(removeChannel(id));
+    },
+  );
+
+  return (
+    <SocketProvider socket={socketInstance}>
+      <I18nextProvider i18n={i18nextInstance}>
+        <StoreProvider store={store}>
+          <ProvideAuth>
+            <App />
+          </ProvideAuth>
+        </StoreProvider>
+      </I18nextProvider>
+    </SocketProvider>
+  );
 };

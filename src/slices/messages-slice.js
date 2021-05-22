@@ -14,20 +14,21 @@ const messagesSlice = createSlice({
   reducers: {
     newMessage: messagesAdapter.addOne,
   },
-  extraReducers: {
-    [getChatData.fulfilled]: (state, action) => {
-      const { messages } = action.payload;
+  extraReducers: (builder) => {
+    builder
+      .addCase(getChatData.fulfilled, (state, action) => {
+        const { messages } = action.payload;
 
-      messagesAdapter.upsertMany(state, messages);
-    },
-    [removeChannel]: (state, action) => {
-      const { id: removedChannelId } = action.payload;
-      const { ids, entities } = state;
-      const messageIdsInRemovedChannel = ids
-        .filter((id) => entities[id].channelId === removedChannelId);
+        messagesAdapter.upsertMany(state, messages);
+      })
+      .addCase(removeChannel, (state, action) => {
+        const { id: removedChannelId } = action.payload;
+        const { ids, entities } = state;
+        const messageIdsInRemovedChannel = ids
+          .filter((id) => entities[id].channelId === removedChannelId);
 
-      messagesAdapter.removeMany(state, messageIdsInRemovedChannel);
-    },
+        messagesAdapter.removeMany(state, messageIdsInRemovedChannel);
+      });
   },
 });
 

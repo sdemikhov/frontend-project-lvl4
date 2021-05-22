@@ -32,10 +32,13 @@ const useProvideAuth = () => {
     setUser(false);
   };
 
+  const isAuthorized = () => !!user.username && !!user.token;
+
   return {
     user,
     signin,
     signout,
+    isAuthorized,
   };
 };
 

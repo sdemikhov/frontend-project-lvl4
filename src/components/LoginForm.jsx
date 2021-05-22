@@ -23,7 +23,7 @@ const LoginForm = () => {
   };
 
   const { from } = location.state || { from: { pathname: routes.mainPagePath() } };
-  return auth.user.token ? (
+  return auth.isAuthorized() ? (
     <h1>{t('loginForm.alreadyLoggedIn')}</h1>
   ) : (
     <Formik
