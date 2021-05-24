@@ -9,7 +9,6 @@ import { Provider as StoreProvider } from 'react-redux';
 import { ProvideAuth } from './auth.jsx';
 import { SocketProvider } from './socket.jsx';
 import resources from './locales/locales.js';
-import chatDataReducer from './slices/chat-data-slice.js';
 import channelsReducer, {
   removeChannel,
   renameChannel,
@@ -25,7 +24,6 @@ export default async (socketInstance) => {
 
   const store = configureStore({
     reducer: {
-      chatData: chatDataReducer,
       channels: channelsReducer,
       messages: messagesReducer,
       modal: modalReducer,

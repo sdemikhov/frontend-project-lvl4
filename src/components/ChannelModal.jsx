@@ -1,90 +1,31 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSelector, useDispatch } from 'react-redux';
-import { createSelector } from 'reselect';
 import Modal from 'react-bootstrap/Modal';
 
-import { useSocket } from '../socket.jsx';
 import { closeModal } from '../slices/modal-slice.js';
-import СhannelForm from './ChannelForm.jsx';
-import ChannelRemoveDialog from './ChannelRemoveDialog.jsx';
-
-const getChannelIdForModal = createSelector(
-  ({ modal }) => modal.extra,
-  (extra) => {
-    if (extra) {
-      return extra.channelId;
-    }
-
-    return null;
-  },
-);
-
-const getChannelNameForModal = createSelector(
-  getChannelIdForModal,
-  ({ channels }) => channels.entities,
-  (id, entities) => {
-    if (id) {
-      return entities[id].name;
-    }
-
-    return '';
-  },
-);
+import AddСhannelForm from './AddChannelForm.jsx';
+import RenameСhannelForm from './RenameChannelForm.jsx';
+import RemoveChannelDialog from './RemoveChannelDialog.jsx';
 
 const ChannelModalBody = ({ type, onCloseModal }) => {
-  const { t } = useTranslation();
-  const socket = useSocket();
-
-  const channelId = useSelector(getChannelIdForModal);
-  const channelName = useSelector(getChannelNameForModal);
-
-  const handleRenameChannel = (id) => (newName, cb) => {
-    socket.emit('renameChannel', { id, name: newName }, (response) => {
-      if (response.status === 'ok') {
-        cb();
-        onCloseModal();
-      } else {
-        throw new Error(t('errors.network.common'));
-      }
-    });
-  };
-
-  const addChannel = (name, cb) => {
-    socket.emit('newChannel', { name }, (response) => {
-      if (response.status === 'ok') {
-        cb();
-        onCloseModal();
-      } else {
-        throw new Error(t('errors.network.common'));
-      }
-    });
-  };
-
   switch (type) {
     case 'removeChannel':
       return (
-        <ChannelRemoveDialog
-          channelId={channelId}
-          onCancel={onCloseModal}
+        <RemoveChannelDialog
           onCloseModal={onCloseModal}
         />
       );
     case 'newChannel':
       return (
-        <СhannelForm
-          testid="new-channel"
-          onSuccess={addChannel}
-          onCancel={onCloseModal}
+        <AddСhannelForm
+          onCloseModal={onCloseModal}
         />
       );
     case 'renameChannel':
       return (
-        <СhannelForm
-          testid="rename-channel"
-          initalName={channelName}
-          onSuccess={handleRenameChannel(channelId)}
-          onCancel={onCloseModal}
+        <RenameСhannelForm
+          onCloseModal={onCloseModal}
         />
       );
     default:

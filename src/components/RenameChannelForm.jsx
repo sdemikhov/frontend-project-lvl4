@@ -1,30 +1,40 @@
 import React, { useRef, useEffect } from 'react';
 import { Formik } from 'formik';
 import { useTranslation } from 'react-i18next';
+import { useSelector } from 'react-redux';
 import Form from 'react-bootstrap/Form';
 import Button from 'react-bootstrap/Button';
 
 import validationSchemas from '../validation-schemas.js';
+import { useSocket } from '../socket.jsx';
+import { getChannelIdForModal, getChannelNameForModal } from '../slices/modal-slice.js';
 
-const СhannelForm = ({
-  initalName = '',
-  testid,
-  onSuccess,
-  onCancel,
+const RenameChannelForm = ({
+  onCloseModal,
 }) => {
   const { t } = useTranslation();
+  const socket = useSocket();
   const inputRef = useRef(null);
+  const id = useSelector(getChannelIdForModal);
+  const initialName = useSelector(getChannelNameForModal);
 
   useEffect(() => {
     inputRef.current.focus();
-  });
+  }, []);
 
   return (
     <Formik
-      initialValues={{ channelName: initalName }}
+      initialValues={{ channelName: initialName }}
       validationSchema={validationSchemas.ChannelIteractionFormSchema}
-      onSubmit={({ channelName }, { setSubmitting }) => {
-        onSuccess(channelName, () => setSubmitting(false));
+      onSubmit={({ channelName }, { setSubmitting, setStatus }) => {
+        socket.emit('renameChannel', { id, name: channelName }, (response) => {
+          if (response.status === 'ok') {
+            setSubmitting(false);
+            onCloseModal();
+          } else {
+            setStatus({ key: 'errors.network.common' });
+          }
+        });
       }}
     >
       {({
@@ -35,6 +45,7 @@ const СhannelForm = ({
         isSubmitting,
         errors,
         touched,
+        status,
       }) => (
         <Form
           noValidate
@@ -50,7 +61,7 @@ const СhannelForm = ({
               onChange={handleChange}
               onBlur={handleBlur}
               disabled={isSubmitting}
-              data-testid={testid}
+              data-testid="rename-channel"
               ref={inputRef}
               isInvalid={touched.channelName && !!errors.channelName}
             />
@@ -58,11 +69,14 @@ const СhannelForm = ({
               {errors.channelName && t(errors.channelName.key)}
             </Form.Control.Feedback>
           </Form.Group>
+          <Form.Group>
+            {status && <span className="text-danger">{t(status.key)}</span>}
+          </Form.Group>
           <Form.Group className="d-flex justify-content-between">
             <Button
               variant="secondary"
               disabled={isSubmitting}
-              onClick={onCancel}
+              onClick={onCloseModal}
             >
               {t('channelInteractionForm.cancelButton')}
             </Button>
@@ -79,4 +93,4 @@ const СhannelForm = ({
   );
 };
 
-export default СhannelForm;
+export default RenameChannelForm;

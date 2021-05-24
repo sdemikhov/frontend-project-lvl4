@@ -1,4 +1,5 @@
 import { createSlice } from '@reduxjs/toolkit';
+import { createSelector } from 'reselect';
 
 const modalSlice = createSlice({
   name: 'modal',
@@ -15,6 +16,29 @@ const modalSlice = createSlice({
     closeModal: () => ({ isOpened: false, type: null, extra: null }),
   },
 });
+
+export const getChannelIdForModal = createSelector(
+  ({ modal }) => modal.extra,
+  (extra) => {
+    if (extra) {
+      return extra.channelId;
+    }
+
+    return null;
+  },
+);
+
+export const getChannelNameForModal = createSelector(
+  getChannelIdForModal,
+  ({ channels }) => channels.entities,
+  (id, entities) => {
+    if (id) {
+      return entities[id].name;
+    }
+
+    return '';
+  },
+);
 
 export const { openModal, closeModal } = modalSlice.actions;
 

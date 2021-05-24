@@ -1,8 +1,6 @@
 /* eslint-disable no-param-reassign, */
 import { createSlice, createEntityAdapter } from '@reduxjs/toolkit';
 
-import { getChatData } from './chat-data-slice.js';
-
 const channelsAdapter = createEntityAdapter({
   sortComparer: (channel1, channel2) => channel1.id - channel2.id,
 });
@@ -13,7 +11,14 @@ const channelsSlice = createSlice({
     { currentChannelId: null, defaultChannelId: null },
   ),
   reducers: {
-    setCurrentChannelId(state, action) {
+    setInitialState: (state, action) => {
+      const { channels, currentChannelId } = action.payload;
+
+      channelsAdapter.upsertMany(state, channels);
+      state.currentChannelId = currentChannelId;
+      state.defaultChannelId = currentChannelId;
+    },
+    setCurrentChannelId: (state, action) => {
       state.currentChannelId = action.payload;
     },
     removeChannel: (state, action) => {
@@ -29,21 +34,12 @@ const channelsSlice = createSlice({
     renameChannel: channelsAdapter.updateOne,
     newChannel: channelsAdapter.addOne,
   },
-  extraReducers: (builder) => {
-    builder
-      .addCase(getChatData.fulfilled, (state, action) => {
-        const { channels, currentChannelId } = action.payload;
-
-        channelsAdapter.upsertMany(state, channels);
-        state.currentChannelId = currentChannelId;
-        state.defaultChannelId = currentChannelId;
-      });
-  },
 });
 
 export const selectCurrentChannelId = ({ channels }) => channels.currentChannelId;
 
 export const {
+  setInitialState,
   setCurrentChannelId,
   removeChannel,
   renameChannel,

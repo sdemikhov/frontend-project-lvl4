@@ -1,8 +1,7 @@
 /* eslint-disable no-param-reassign, */
 import { createSlice, createEntityAdapter } from '@reduxjs/toolkit';
 
-import { getChatData } from './chat-data-slice.js';
-import { removeChannel } from './channels-slice.js';
+import { setInitialState, removeChannel } from './channels-slice.js';
 
 const messagesAdapter = createEntityAdapter({
   sortComparer: (message1, message2) => message1.id - message2.id,
@@ -16,7 +15,7 @@ const messagesSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder
-      .addCase(getChatData.fulfilled, (state, action) => {
+      .addCase(setInitialState, (state, action) => {
         const { messages } = action.payload;
 
         messagesAdapter.upsertMany(state, messages);
