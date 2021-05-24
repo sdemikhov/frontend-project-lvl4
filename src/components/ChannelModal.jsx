@@ -45,7 +45,7 @@ const ChannelModalBody = ({ type, onCloseModal }) => {
         cb();
         onCloseModal();
       } else {
-        throw new Error(t('errors.network.unknown'));
+        throw new Error(t('errors.network.common'));
       }
     });
   };
@@ -56,7 +56,7 @@ const ChannelModalBody = ({ type, onCloseModal }) => {
         cb();
         onCloseModal();
       } else {
-        throw new Error(t('errors.network.unknown'));
+        throw new Error(t('errors.network.common'));
       }
     });
   };

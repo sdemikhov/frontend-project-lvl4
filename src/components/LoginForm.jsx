@@ -43,7 +43,7 @@ const LoginForm = () => {
             if (err.response.status === 401) {
               actions.setStatus({ key: 'errors.network.unauthorized' });
             } else {
-              actions.setStatus({ key: 'errors.network.unknown' });
+              actions.setStatus({ key: 'errors.network.common' });
             }
           } else {
             actions.setStatus({ key: 'errors.unknown' });

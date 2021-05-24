@@ -36,7 +36,7 @@ const RegisterForm = () => {
             if (err.response.status === 409) {
               actions.setStatus({ key: 'errors.network.userAlreadyExist' });
             } else {
-              actions.setStatus({ key: 'errors.network.unknown' });
+              actions.setStatus({ key: 'errors.network.common' });
             }
           } else {
             actions.setStatus({ key: 'errors.unknown' });

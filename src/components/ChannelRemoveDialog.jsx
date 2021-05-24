@@ -13,7 +13,7 @@ const ChannelRemoveDialog = ({ channelId, onCancel, onCloseModal }) => {
       if (response.status === 'ok') {
         onCloseModal();
       } else {
-        throw new Error(t('errors.network.unknown'));
+        throw new Error(t('errors.network.common'));
       }
     });
   };
