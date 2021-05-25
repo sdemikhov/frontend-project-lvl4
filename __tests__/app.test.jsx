@@ -269,7 +269,7 @@ test('User should type new message to default channel', async () => {
   expect(await screen.findByText(searchMessage('Vasyan', 'Hello'))).toBeInTheDocument();
 });
 
-test('User should change the channel and type new message', async () => {
+test('User should type new message change the channel and type another message', async () => {
   const { state } = testData;
 
   nock(host)
@@ -282,14 +282,20 @@ test('User should change the channel and type new message', async () => {
   userEvent.type(screen.getByLabelText(/Ваш ник/i), 'Vasya1');
   userEvent.type(screen.getByLabelText(/Пароль/i), 'CorrectPassword');
   userEvent.click(screen.getByRole('button', { name: /Войти/i }));
+  expect(await screen.findByRole('button', { name: /general/i })).toBeInTheDocument();
   expect(await screen.findByRole('button', { name: /random/i })).toBeInTheDocument();
 
-  userEvent.click(screen.getByRole('button', { name: /random/i }));
+  userEvent.type(await screen.findByTestId('new-message'), 'message for general');
+  userEvent.click(await screen.findByRole('button', { name: /Отправить/i }));
+  expect(await screen.findByText(/message for general/i)).toBeInTheDocument();
+
+  userEvent.click(await screen.findByRole('button', { name: /random/i }));
   expect(await screen.findByRole('button', { name: /random/i })).toHaveClass(
     'text-light font-weight-bold btn btn-dark',
     { exact: true },
   );
   expect(screen.getByTestId('new-message')).toHaveAttribute('value', '');
+  expect(screen.queryByText(/message for general/i)).not.toBeInTheDocument();
 
   userEvent.type(screen.getByTestId('new-message'), 'Message in random chat');
   userEvent.click(screen.getByRole('button', { name: /Отправить/i }));
