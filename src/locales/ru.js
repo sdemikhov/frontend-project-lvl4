@@ -36,7 +36,7 @@ export default {
     channelsNav: {
       dropdownRename: 'Переименовать',
       dropdownRemove: 'Удалить',
-      addButton: 'Новый...',
+      addButton: '+',
     },
     modal: {
       titles: {

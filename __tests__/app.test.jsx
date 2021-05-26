@@ -316,9 +316,9 @@ test('User should create new channel', async () => {
   userEvent.type(screen.getByLabelText(/Ваш ник/i), 'Vasya');
   userEvent.type(screen.getByLabelText(/Пароль/i), 'CorrectPassword');
   userEvent.click(screen.getByRole('button', { name: /Войти/i }));
-  expect(await screen.findByRole('button', { name: /Новый\.\.\./i })).toBeInTheDocument();
+  expect(await screen.findByRole('button', { name: /\+/i })).toBeInTheDocument();
 
-  userEvent.click(screen.getByRole('button', { name: /Новый\.\.\./i }));
+  userEvent.click(screen.getByRole('button', { name: /\+/i }));
   expect(await screen.findByTestId('new-channel')).toBeInTheDocument();
   expect(screen.getByText(/Создать канал/i)).toBeVisible();
   expect(screen.getByTestId('new-channel')).toHaveAttribute('value', '');
