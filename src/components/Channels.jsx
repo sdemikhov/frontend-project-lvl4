@@ -78,7 +78,7 @@ const Channels = (props, ref) => {
         <div className="d-flex justify-content-between align-items-baseline">
           <span className="text-secondary">Каналы:</span>
           <Button
-            test-id="add-channel"
+            data-testid="add-channel"
             className="font-weight-bold border-light"
             onClick={onShowModalForChannelAdd}
             variant="dark"

@@ -28,8 +28,12 @@ const SendMessageForm = (props, ref) => {
           sender: username,
         };
 
-        socket.emit('newMessage', message, () => {
-          actions.setSubmitting(false);
+        socket.emit('newMessage', message, (response) => {
+          if (response.status === 'ok') {
+            actions.setSubmitting(false);
+          } else {
+            actions.setStatus({ key: 'errors.network.common' });
+          }
         });
 
         actions.resetForm();
@@ -42,6 +46,7 @@ const SendMessageForm = (props, ref) => {
         handleBlur,
         values,
         isSubmitting,
+        status,
       }) => (
         <Form
           noValidate
@@ -49,6 +54,9 @@ const SendMessageForm = (props, ref) => {
           className="pb-2 pt-2"
           autoComplete="off"
         >
+          <Form.Group>
+            {status && <span className="text-danger">{t(status.key)}</span>}
+          </Form.Group>
           <Form.Row>
             <Col>
               <Form.Control
