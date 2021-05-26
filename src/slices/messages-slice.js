@@ -18,7 +18,7 @@ const messagesSlice = createSlice({
       .addCase(setInitialState, (state, action) => {
         const { messages } = action.payload;
 
-        messagesAdapter.upsertMany(state, messages);
+        messagesAdapter.setAll(state, messages);
       })
       .addCase(removeChannel, (state, action) => {
         const { id: removedChannelId } = action.payload;

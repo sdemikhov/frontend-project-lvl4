@@ -14,7 +14,7 @@ const channelsSlice = createSlice({
     setInitialState: (state, action) => {
       const { channels, currentChannelId } = action.payload;
 
-      channelsAdapter.upsertMany(state, channels);
+      channelsAdapter.setAll(state, channels);
       state.currentChannelId = currentChannelId;
       state.defaultChannelId = currentChannelId;
     },
