@@ -57,7 +57,7 @@ const AddChannelForm = ({
               onChange={handleChange}
               onBlur={handleBlur}
               disabled={isSubmitting}
-              data-testid="new-channel"
+              data-testid="add-channel"
               ref={inputRef}
               isInvalid={touched.channelName && !!errors.channelName}
             />
