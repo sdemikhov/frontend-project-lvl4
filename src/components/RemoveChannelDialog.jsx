@@ -4,12 +4,12 @@ import Button from 'react-bootstrap/Button';
 import { useSelector } from 'react-redux';
 
 import { useSocket } from '../socket.jsx';
-import { getChannelIdForModal } from '../slices/modal-slice.js';
+import { selectChannelIdForModal } from '../slices/modal-slice.js';
 
 const RemoveChannelDialog = ({ onCloseModal }) => {
   const { t } = useTranslation();
   const socket = useSocket();
-  const channelId = useSelector(getChannelIdForModal);
+  const channelId = useSelector(selectChannelIdForModal);
 
   const handleRemoveChannel = (id) => () => {
     socket.emit('removeChannel', { id }, (response) => {

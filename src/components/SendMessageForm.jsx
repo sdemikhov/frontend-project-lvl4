@@ -9,11 +9,12 @@ import Button from 'react-bootstrap/Button';
 import { useSocket } from '../socket.jsx';
 import { useAuth } from '../auth.jsx';
 import validationSchemas from '../validation-schemas.js';
+import { selectCurrentChannelId } from '../slices/channels-slice.js';
 
 const SendMessageForm = (props, ref) => {
   const { t } = useTranslation();
   const socket = useSocket();
-  const currentChannelId = useSelector(({ channels }) => channels.currentChannelId);
+  const currentChannelId = useSelector(selectCurrentChannelId);
   const { user: { username } } = useAuth();
 
   return (

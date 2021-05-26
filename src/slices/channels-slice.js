@@ -1,20 +1,14 @@
 /* eslint-disable no-param-reassign, */
-import { createSlice, createEntityAdapter } from '@reduxjs/toolkit';
-
-const channelsAdapter = createEntityAdapter({
-  sortComparer: (channel1, channel2) => channel1.id - channel2.id,
-});
+import { createSlice } from '@reduxjs/toolkit';
 
 const channelsSlice = createSlice({
-  name: 'channels',
-  initialState: channelsAdapter.getInitialState(
-    { currentChannelId: null, defaultChannelId: null },
-  ),
+  name: 'channelsInfo',
+  initialState: { defaultChannelId: null, currentChannelId: null, channels: [] },
   reducers: {
     setInitialState: (state, action) => {
       const { channels, currentChannelId } = action.payload;
 
-      channelsAdapter.setAll(state, channels);
+      state.channels = channels;
       state.currentChannelId = currentChannelId;
       state.defaultChannelId = currentChannelId;
     },
@@ -23,20 +17,35 @@ const channelsSlice = createSlice({
     },
     removeChannel: (state, action) => {
       const { currentChannelId, defaultChannelId } = state;
-      const id = action.payload;
+      const removedChannelId = action.payload;
 
-      if (currentChannelId === id) {
+      if (currentChannelId === removedChannelId) {
         state.currentChannelId = defaultChannelId;
       }
 
-      channelsAdapter.removeOne(state, action);
+      const newChannels = state.channels.filter(({ id }) => id !== removedChannelId);
+      state.channels = newChannels;
     },
-    renameChannel: channelsAdapter.updateOne,
-    newChannel: channelsAdapter.addOne,
+    renameChannel: (state, action) => {
+      const updatedChannel = action.payload;
+
+      const newChannels = state.channels.reduce((acc, channel) => {
+        if (channel.id === updatedChannel.id) {
+          return [...acc, updatedChannel];
+        }
+
+        return [...acc, channel];
+      }, []);
+
+      state.channels = newChannels;
+    },
+    newChannel: (state, action) => {
+      state.channels.push(action.payload);
+    },
   },
 });
 
-export const selectCurrentChannelId = ({ channels }) => channels.currentChannelId;
+export const selectCurrentChannelId = ({ channelsInfo }) => channelsInfo.currentChannelId;
 
 export const {
   setInitialState,
@@ -45,10 +54,5 @@ export const {
   renameChannel,
   newChannel,
 } = channelsSlice.actions;
-
-export const {
-  selectById,
-  selectIds,
-} = channelsAdapter.getSelectors((state) => state.channels);
 
 export default channelsSlice.reducer;

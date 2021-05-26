@@ -3,20 +3,13 @@ import { createSelector } from 'reselect';
 import { useSelector } from 'react-redux';
 import { scroller } from 'react-scroll';
 
-import {
-  selectIds,
-  selectEntities,
-} from '../slices/messages-slice.js';
 import { selectCurrentChannelId } from '../slices/channels-slice.js';
 
 const getMessagesInCurrentChannel = createSelector(
-  selectIds,
-  selectEntities,
+  (state) => state.messagesInfo.messages,
   selectCurrentChannelId,
-  (ids, entities, currentChannelId) => {
-    const messagesInCurrentChannel = ids.reduce((acc, id) => {
-      const message = entities[id];
-
+  (messages, currentChannelId) => {
+    const messagesInCurrentChannel = messages.reduce((acc, message) => {
       if (message.channelId === currentChannelId) {
         return [...acc, message];
       }

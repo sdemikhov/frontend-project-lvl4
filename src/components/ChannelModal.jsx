@@ -36,7 +36,7 @@ const ChannelModalBody = ({ type, onCloseModal }) => {
 const ChannelModal = () => {
   const { t } = useTranslation();
   const dispatch = useDispatch();
-  const { isOpened, type } = useSelector(({ modal }) => modal);
+  const { isOpened, type } = useSelector(({ modalInfo }) => modalInfo);
 
   const onCloseModal = () => {
     dispatch(closeModal());

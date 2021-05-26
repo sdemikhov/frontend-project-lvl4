@@ -7,7 +7,7 @@ import Button from 'react-bootstrap/Button';
 
 import validationSchemas from '../validation-schemas.js';
 import { useSocket } from '../socket.jsx';
-import { getChannelIdForModal, getChannelNameForModal } from '../slices/modal-slice.js';
+import { selectChannelIdForModal, selectChannelNameForModal } from '../slices/modal-slice.js';
 
 const RenameChannelForm = ({
   onCloseModal,
@@ -15,8 +15,8 @@ const RenameChannelForm = ({
   const { t } = useTranslation();
   const socket = useSocket();
   const inputRef = useRef(null);
-  const id = useSelector(getChannelIdForModal);
-  const initialName = useSelector(getChannelNameForModal);
+  const id = useSelector(selectChannelIdForModal);
+  const initialName = useSelector(selectChannelNameForModal);
 
   useEffect(() => {
     inputRef.current.focus();

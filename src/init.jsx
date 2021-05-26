@@ -24,9 +24,9 @@ export default async (socketInstance) => {
 
   const store = configureStore({
     reducer: {
-      channels: channelsReducer,
-      messages: messagesReducer,
-      modal: modalReducer,
+      channelsInfo: channelsReducer,
+      messagesInfo: messagesReducer,
+      modalInfo: modalReducer,
     },
   });
 
@@ -47,7 +47,7 @@ export default async (socketInstance) => {
   socketInstance.on(
     'renameChannel',
     (channel) => {
-      store.dispatch(renameChannel({ id: channel.id, changes: { ...channel } }));
+      store.dispatch(renameChannel(channel));
     },
   );
 

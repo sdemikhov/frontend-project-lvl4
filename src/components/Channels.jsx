@@ -7,16 +7,12 @@ import Nav from 'react-bootstrap/Nav';
 import Dropdown from 'react-bootstrap/Dropdown';
 import ButtonGroup from 'react-bootstrap/ButtonGroup';
 
-import {
-  setCurrentChannelId,
-  selectById,
-  selectIds,
-} from '../slices/channels-slice.js';
+import { setCurrentChannelId, selectCurrentChannelId } from '../slices/channels-slice.js';
 import { openModal } from '../slices/modal-slice.js';
 import ChannelModal from './ChannelModal.jsx';
 
 const Channel = React.forwardRef(
-  ({ id }, ref) => {
+  ({ body: { id, name, removable } }, ref) => {
     const dispatch = useDispatch();
     const { t } = useTranslation();
 
@@ -35,22 +31,21 @@ const Channel = React.forwardRef(
       dispatch(openModal({ isOpened: true, type: 'removeChannel', extra: { channelId: id } }));
     };
 
-    const currentChannelId = useSelector((state) => state.channels.currentChannelId);
-    const channel = useSelector((state) => selectById(state, id));
+    const currentChannelId = useSelector(selectCurrentChannelId);
 
     const channelClass = cn({
       'text-light': id === currentChannelId,
       'font-weight-bold': id === currentChannelId,
       'text-secondary': id !== currentChannelId,
     });
-    const dropdowntestId = `dropdown-channelId-${channel.id}`;
-    const dropdownId = `channel-${channel.name}-context`;
+    const dropdowntestId = `dropdown-channelId-${id}`;
+    const dropdownId = `channel-${name}-context`;
 
     return (
       <Nav.Item>
-        {channel.removable ? (
+        {removable ? (
           <Dropdown as={ButtonGroup}>
-            <Button variant="dark" className={channelClass} onClick={onSetCurrentChannel}>{channel.name}</Button>
+            <Button variant="dark" className={channelClass} onClick={onSetCurrentChannel}>{name}</Button>
 
             <Dropdown.Toggle split variant="dark" id={dropdownId} data-testid={dropdowntestId} />
 
@@ -60,7 +55,7 @@ const Channel = React.forwardRef(
             </Dropdown.Menu>
           </Dropdown>
         ) : (
-          <Button variant="dark" className={channelClass} onClick={onSetCurrentChannel}>{channel.name}</Button>
+          <Button variant="dark" className={channelClass} onClick={onSetCurrentChannel}>{name}</Button>
         )}
       </Nav.Item>
     );
@@ -70,7 +65,7 @@ const Channel = React.forwardRef(
 const Channels = (props, ref) => {
   const { t } = useTranslation();
   const dispatch = useDispatch();
-  const channelsIds = useSelector(selectIds);
+  const channels = useSelector((state) => state.channelsInfo.channels);
 
   const onShowModalForChannelAdd = (e) => {
     e.preventDefault();
@@ -84,7 +79,9 @@ const Channels = (props, ref) => {
           <span className="text-secondary">Каналы:</span>
           <Button onClick={onShowModalForChannelAdd} variant="dark" size="sm">{t('channelsNav.addButton')}</Button>
         </div>
-        {React.Children.map(channelsIds, (id) => <Channel key={id} id={id} ref={ref} />)}
+        {channels.map(
+          (channel) => <Channel key={channel.id} body={channel} ref={ref} />,
+        )}
       </Nav>
       <ChannelModal />
     </>
