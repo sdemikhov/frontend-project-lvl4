@@ -1,6 +1,7 @@
-import React, { useRef, useEffect } from 'react';
+import React, { useEffect } from 'react';
 import { createSelector } from 'reselect';
 import { useSelector } from 'react-redux';
+import { scroller } from 'react-scroll';
 
 import {
   selectIds,
@@ -29,24 +30,27 @@ const getMessagesInCurrentChannel = createSelector(
 
 const Messages = () => {
   const messages = useSelector(getMessagesInCurrentChannel);
-  const messagesEnd = useRef(null);
+  const containerId = 'messages';
+  const messagesEnd = 'messagesEnd';
 
   useEffect(() => {
-    const { current } = messagesEnd;
-    if (current) {
-      current.scrollIntoView();
-    }
+    scroller.scrollTo(messagesEnd, {
+      duration: 800,
+      delay: 0,
+      smooth: 'easeInOutQuart',
+      containerId,
+    });
   }, [messages]);
 
   return (
-    <div className="overflow-auto">
+    <div id={containerId} className="overflow-auto">
       {messages.map(({ id, body, sender }) => (
         <div key={id} className="text-break">
           <b>{sender}</b>
           {`: ${body}`}
         </div>
       ))}
-      <div ref={messagesEnd} />
+      <div id={messagesEnd} />
     </div>
   );
 };
