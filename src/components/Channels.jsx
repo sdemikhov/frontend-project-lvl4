@@ -77,7 +77,15 @@ const Channels = (props, ref) => {
       <Nav className="flex-column">
         <div className="d-flex justify-content-between align-items-baseline">
           <span className="text-secondary">Каналы:</span>
-          <Button className="font-weight-bold border-light" onClick={onShowModalForChannelAdd} variant="dark" size="sm">{t('channelsNav.addButton')}</Button>
+          <Button
+            test-id="add-channel"
+            className="font-weight-bold border-light"
+            onClick={onShowModalForChannelAdd}
+            variant="dark"
+            size="sm"
+          >
+            {t('channelsNav.addButton')}
+          </Button>
         </div>
         {channels.map(
           (channel) => <Channel key={channel.id} body={channel} ref={ref} />,
