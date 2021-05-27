@@ -319,30 +319,30 @@ test('User should create new channel', async () => {
   expect(await screen.findByRole('button', { name: /\+/i })).toBeInTheDocument();
 
   userEvent.click(screen.getByRole('button', { name: /\+/i }));
-  expect(await screen.findByTestId('new-channel')).toBeInTheDocument();
+  expect(await screen.findByTestId('add-channel')).toBeInTheDocument();
   expect(screen.getByText(/Создать канал/i)).toBeVisible();
-  expect(screen.getByTestId('new-channel')).toHaveAttribute('value', '');
+  expect(screen.getByTestId('add-channel')).toHaveAttribute('value', '');
 
   userEvent.click(screen.getByRole('button', { name: /Отправить/i }));
   expect(await screen.findByText(/Обязательное поле/i)).toBeVisible();
 
-  userEvent.clear(screen.getByTestId('new-channel'));
-  userEvent.type(screen.getByTestId('new-channel'), ' ');
+  userEvent.clear(screen.getByTestId('add-channel'));
+  userEvent.type(screen.getByTestId('add-channel'), ' ');
   userEvent.click(screen.getByRole('button', { name: /Отправить/i }));
   expect(await screen.findByText(/Обязательное поле/i)).toBeVisible();
 
-  userEvent.clear(screen.getByTestId('new-channel'));
-  userEvent.type(screen.getByTestId('new-channel'), 'aa');
+  userEvent.clear(screen.getByTestId('add-channel'));
+  userEvent.type(screen.getByTestId('add-channel'), 'aa');
   userEvent.click(screen.getByRole('button', { name: /Отправить/i }));
   expect(await screen.findByText(/От 3 до 20 символов/i)).toBeVisible();
 
-  userEvent.clear(screen.getByTestId('new-channel'));
-  userEvent.type(screen.getByTestId('new-channel'), _.repeat('a', 21));
+  userEvent.clear(screen.getByTestId('add-channel'));
+  userEvent.type(screen.getByTestId('add-channel'), _.repeat('a', 21));
   userEvent.click(screen.getByRole('button', { name: /Отправить/i }));
   expect(await screen.findByText(/От 3 до 20 символов/i)).toBeVisible();
 
-  userEvent.clear(screen.getByTestId('new-channel'));
-  userEvent.type(screen.getByTestId('new-channel'), 'CustomNewChannel');
+  userEvent.clear(screen.getByTestId('add-channel'));
+  userEvent.type(screen.getByTestId('add-channel'), 'CustomNewChannel');
   userEvent.click(screen.getByRole('button', { name: /Отправить/i }));
   expect(screen.getByRole('button', { name: /Отправить/i })).toBeDisabled();
   expect(await screen.findByText(/CustomNewChannel/i)).toBeInTheDocument();

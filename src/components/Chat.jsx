@@ -21,6 +21,8 @@ const Chat = () => {
   const [error, setError] = useState(null);
 
   useEffect(() => {
+    let didMount = true; // eslint-disable-line
+
     const getChatData = async (token) => {
       try {
         setLoading('pending');
@@ -29,7 +31,9 @@ const Chat = () => {
         });
 
         dispatch(setInitialState(response.data));
-        setLoading('fulfilled');
+        if (didMount) {
+          setLoading('fulfilled');
+        }
       } catch (err) {
         if (axios.isAxiosError(err)) {
           if (err.response.status === 401) {
@@ -43,6 +47,10 @@ const Chat = () => {
 
         setLoading({ key: 'rejected' });
       }
+
+      return () => {
+        didMount = false;
+      };
     };
 
     if (sendMessageInputRef.current) {
