@@ -98,7 +98,7 @@ const getSocket = (state = {}) => {
 
 const searchMessage = (sender, body) => (content, element) => {
   const hasMessageBody = content === `: ${body}`;
-  const child = element.firstElementChild;
+  const child = element.firstElementChild;// eslint-disable-line
 
   if (child) {
     const hasSender = child.textContent === sender;
@@ -249,7 +249,7 @@ test('User should type new message to default channel', async () => {
   userEvent.click(screen.getByRole('button', { name: /Войти/i }));
 
   await screen.findByText(/general/i);
-  expect(screen.getByTestId('new-message')).toHaveAttribute('value', '');
+  expect(screen.getByTestId('new-message')).toHaveValue('');
 
   userEvent.click(screen.getByRole('button', { name: /Отправить/i }));
   await waitFor(() => {
@@ -294,7 +294,7 @@ test('User should type new message change the channel and type another message',
     'text-light font-weight-bold btn btn-dark',
     { exact: true },
   );
-  expect(screen.getByTestId('new-message')).toHaveAttribute('value', '');
+  expect(screen.getByTestId('new-message')).toHaveValue('');
   expect(screen.queryByText(/message for general/i)).not.toBeInTheDocument();
 
   userEvent.type(screen.getByTestId('new-message'), 'Message in random chat');
@@ -321,7 +321,7 @@ test('User should create new channel', async () => {
   userEvent.click(screen.getByRole('button', { name: /\+/i }));
   expect(await screen.findByTestId('add-channel')).toBeInTheDocument();
   expect(screen.getByText(/Создать канал/i)).toBeVisible();
-  expect(screen.getByTestId('add-channel')).toHaveAttribute('value', '');
+  expect(screen.getByTestId('add-channel')).toHaveValue('');
 
   userEvent.click(screen.getByRole('button', { name: /Отправить/i }));
   expect(await screen.findByText(/Обязательное поле/i)).toBeVisible();
