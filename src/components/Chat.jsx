@@ -47,10 +47,6 @@ const Chat = () => {
 
         setLoading({ key: 'rejected' });
       }
-
-      return () => {
-        didMount = false;
-      };
     };
 
     if (sendMessageInputRef.current) {
@@ -60,6 +56,10 @@ const Chat = () => {
     if (loading === 'idle') {
       getChatData(auth.user.token);
     }
+
+    return () => {
+      didMount = false;
+    };
   }, [auth, dispatch, loading]);
 
   if (loading === 'fulfilled') {
