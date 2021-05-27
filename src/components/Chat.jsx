@@ -21,8 +21,6 @@ const Chat = () => {
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    let didMount = true; // eslint-disable-line
-
     const getChatData = async (token) => {
       try {
         setLoading('pending');
@@ -30,10 +28,8 @@ const Chat = () => {
           headers: { Authorization: `Bearer ${token}` },
         });
 
+        setLoading('fulfilled');
         dispatch(setInitialState(response.data));
-        if (didMount) {
-          setLoading('fulfilled');
-        }
       } catch (err) {
         if (axios.isAxiosError(err)) {
           if (err.response.status === 401) {
@@ -56,10 +52,6 @@ const Chat = () => {
     if (loading === 'idle') {
       getChatData(auth.user.token);
     }
-
-    return () => {
-      didMount = false;
-    };
   }, [auth, dispatch, loading]);
 
   if (loading === 'fulfilled') {
