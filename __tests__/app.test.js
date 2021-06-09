@@ -1,3 +1,7 @@
+/**
+ * @jest-environment jsdom
+ */
+
 import SocketClientMock from 'socket.io-mock';
 import axios from 'axios';
 import httpAdapter from 'axios/lib/adapters/http';
