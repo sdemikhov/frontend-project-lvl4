@@ -1,28 +1,27 @@
----
-
-root: true
-
-plugins:
-  - functional
-
-extends:
-  - airbnb
-  - "plugin:functional/external-recommended"
-  - "plugin:functional/recommended"
-  - "plugin:react-hooks/recommended"
-
-parser: babel-eslint
-
 env:
   browser: true
-  node: true
+  es2021: true
   jest: true
-
+extends:
+  - 'plugin:functional/external-recommended'
+  - 'plugin:functional/recommended'
+  - 'plugin:react-hooks/recommended'
+  - 'plugin:react/recommended'
+  - airbnb
+parser: '@typescript-eslint/parser'
+parserOptions:
+  ecmaFeatures:
+    jsx: true
+  ecmaVersion: 12
+  sourceType: module
+plugins:
+  - react
+  - '@typescript-eslint'
+  - functional
 settings:
   import/resolver:
     - node
     - webpack
-
 rules:
   import/extensions: 0
   react/prop-types: 0
@@ -33,3 +32,5 @@ rules:
   functional/functional-parameters: 0
   functional/no-try-statement: 0
   functional/no-throw-statement: 0
+  'no-use-before-define': 'off'
+  '@typescript-eslint/no-use-before-define': ['error']
