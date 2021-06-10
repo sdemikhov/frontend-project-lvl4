@@ -10,10 +10,12 @@ import {
   render, screen, waitFor,
 } from '@testing-library/react';
 import '@testing-library/jest-dom';
-import userEvent from '@testing-library/user-event';
+import event from '@testing-library/user-event';
 import _ from 'lodash';
 
 import init from '../src/init.jsx';
+
+const userEvent = event.default;
 
 axios.defaults.adapter = httpAdapter;
 

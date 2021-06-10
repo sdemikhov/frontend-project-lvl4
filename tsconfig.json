@@ -1,5 +1,6 @@
 {
   "compilerOptions": {
+    "outDir": "./dist/",        // path to output directory
     "sourceMap": true,          // allow sourcemap support
     "jsx": "react",             // use typescript to transpile jsx to js
     "allowJs": true,             // allow a partial TypeScript and JavaScript codebase
