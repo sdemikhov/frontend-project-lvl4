@@ -12,7 +12,7 @@ import routes from '../routes.ts';
 import LoginForm from './LoginForm.jsx';
 import RegisterForm from './RegisterForm.jsx';
 import NavigationToolbar from './NavigationToolbar.jsx';
-import PageNotFound from './PageNotFound.jsx';
+import PageNotFound from './PageNotFound.tsx';
 import PrivateRoute from './PrivateRoute.jsx';
 import Chat from './Chat.jsx';
 
