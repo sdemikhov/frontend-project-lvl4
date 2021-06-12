@@ -19,7 +19,6 @@ plugins:
 settings:
   import/resolver:
     - node
-    - webpack
 rules:
   import/extensions: 0
   react/prop-types: 0
@@ -59,7 +58,7 @@ overrides:
       - functional
     settings:
       import/resolver:
-        typescript: {}
+        - typescript: {}
     rules:
       import/extensions: 0
       react/prop-types: 0
