@@ -4,7 +4,7 @@ import {
   Redirect,
 } from 'react-router-dom';
 
-import routes from '../routes.js';
+import routes from '../routes.ts';
 import { useAuth } from '../auth.jsx';
 
 const PrivateRoute = ({ children, path, exact }) => {

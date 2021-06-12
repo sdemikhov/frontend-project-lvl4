@@ -8,7 +8,6 @@ extends:
   - plugin:react-hooks/recommended
   - plugin:react/recommended
   - airbnb
-parser: '@typescript-eslint/parser'
 parserOptions:
   ecmaFeatures:
     jsx: true
@@ -16,7 +15,6 @@ parserOptions:
   sourceType: module
 plugins:
   - react
-  - '@typescript-eslint'
   - functional
 settings:
   import/resolver:
@@ -32,25 +30,49 @@ rules:
   functional/functional-parameters: 0
   functional/no-try-statement: 0
   functional/no-throw-statement: 0
-  no-use-before-define: off
-  '@typescript-eslint/no-use-before-define': 2
-  react/jsx-filename-extension: 
-    - 1
-    - extensions:
-      - .tsx
-      - .jsx
+
 overrides:
   -
     files: 
       - '*.ts'
       - '*.tsx'
+    env:
+      browser: true
+      es2021: true
+      jest: true
     extends:
-      - 'plugin:@typescript-eslint/recommended'
-      - 'plugin:functional/external-recommended'
-      - 'plugin:functional/recommended'
-      - 'plugin:react-hooks/recommended'
-      - 'plugin:react/recommended'
+      - plugin:functional/external-recommended
+      - plugin:functional/recommended
+      - plugin:react-hooks/recommended
+      - plugin:react/recommended
       - airbnb
+      - "plugin:@typescript-eslint/recommended"
+    parser: '@typescript-eslint/parser'
+    parserOptions:
+      ecmaFeatures:
+        jsx: true
+      ecmaVersion: 12
+      sourceType: module
+    plugins:
+      - react
+      - '@typescript-eslint'
+      - functional
     settings:
       import/resolver:
         typescript: {}
+    rules:
+      import/extensions: 0
+      react/prop-types: 0
+      no-console: 0
+      functional/no-conditional-statement: 0
+      functional/no-expression-statement: 0
+      functional/immutable-data: 0
+      functional/functional-parameters: 0
+      functional/no-try-statement: 0
+      functional/no-throw-statement: 0
+      no-use-before-define: 0
+      '@typescript-eslint/no-use-before-define': 2
+      react/jsx-filename-extension: 
+        - 1
+        - extensions:
+          - .tsx

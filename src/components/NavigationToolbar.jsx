@@ -5,7 +5,7 @@ import { useHistory } from 'react-router-dom';
 import Button from 'react-bootstrap/Button';
 
 import { useAuth } from '../auth.jsx';
-import routes from '../routes.js';
+import routes from '../routes.ts';
 
 const NavigationToolbar = () => {
   const { t } = useTranslation();

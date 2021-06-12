@@ -8,7 +8,7 @@ import axios from 'axios';
 import { useHistory, useLocation } from 'react-router-dom';
 
 import validationSchemas from '../validation-schemas.js';
-import routes from '../routes.js';
+import routes from '../routes.ts';
 import { useAuth } from '../auth.jsx';
 
 const LoginForm = () => {

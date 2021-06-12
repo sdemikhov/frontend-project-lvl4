@@ -9,7 +9,7 @@ import { useAuth } from '../auth.jsx';
 import Channels from './Channels.jsx';
 import Messages from './Messages.jsx';
 import SendMessageForm from './SendMessageForm.jsx';
-import routes from '../routes.js';
+import routes from '../routes.ts';
 import { setInitialState } from '../slices/channels-slice.js';
 
 const Chat = () => {
