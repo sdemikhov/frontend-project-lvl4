@@ -5,19 +5,19 @@ import { useHistory } from 'react-router-dom';
 import Button from 'react-bootstrap/Button';
 
 import { useAuth } from '../auth.jsx';
-import routes from '../routes.ts';
+import routes from '../routes';
 
-const NavigationToolbar = () => {
+const NavigationToolbar = (): JSX.Element => {
   const { t } = useTranslation();
   const history = useHistory();
   const auth = useAuth();
 
-  const signout = () => {
+  const signout = (): void => {
     auth.signout();
     history.push(routes.mainPagePath());
   };
 
-  const onClick = (e) => {
+  const onClick = (e: React.MouseEvent): void => {
     e.preventDefault();
     history.replace(routes.mainPagePath());
   };

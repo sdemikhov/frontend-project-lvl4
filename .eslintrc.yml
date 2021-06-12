@@ -29,7 +29,7 @@ rules:
   functional/functional-parameters: 0
   functional/no-try-statement: 0
   functional/no-throw-statement: 0
-
+  functional/no-return-void: 0
 overrides:
   -
     files: 
@@ -69,6 +69,7 @@ overrides:
       functional/functional-parameters: 0
       functional/no-try-statement: 0
       functional/no-throw-statement: 0
+      functional/no-return-void: 0
       no-use-before-define: 0
       '@typescript-eslint/no-use-before-define': 2
       react/jsx-filename-extension: 

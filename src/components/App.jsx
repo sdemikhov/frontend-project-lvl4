@@ -11,7 +11,7 @@ import Col from 'react-bootstrap/Col';
 import routes from '../routes.ts';
 import LoginForm from './LoginForm.jsx';
 import RegisterForm from './RegisterForm.jsx';
-import NavigationToolbar from './NavigationToolbar.jsx';
+import NavigationToolbar from './NavigationToolbar.tsx';
 import PageNotFound from './PageNotFound.tsx';
 import PrivateRoute from './PrivateRoute.jsx';
 import Chat from './Chat.jsx';
