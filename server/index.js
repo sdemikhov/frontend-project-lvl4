@@ -1,5 +1,3 @@
-// @ts-check
-
 import 'core-js/stable/index.js';
 import 'regenerator-runtime/runtime.js';
 import Pug from 'pug';
@@ -16,7 +14,6 @@ import addRoutes from './routes.js';
 
 const { Unauthorized } = HttpErrors;
 
-// @ts-expect-error
 const __filename = fileURLToPath(import.meta.url); // eslint-disable-line
 // eslint-disable-next-line no-underscore-dangle
 const __dirname = path.dirname(__filename);

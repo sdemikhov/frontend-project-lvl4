@@ -1,5 +1,3 @@
-// @ts-check
-
 import _ from 'lodash';
 import HttpErrors from 'http-errors';
 

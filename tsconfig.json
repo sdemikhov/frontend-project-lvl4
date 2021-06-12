@@ -4,9 +4,15 @@
     "sourceMap": true,          // allow sourcemap support
     "jsx": "react",             // use typescript to transpile jsx to js
     "allowJs": true,             // allow a partial TypeScript and JavaScript codebase
+    "checkJs": false,
+    "strictNullChecks": true,   // enable strict null checks as a best practice
+    "noImplicitAny": true,
+    "target": "es5",            // specify ECMAScript target version
     "module": "es6",            // specify module code generation
     "moduleResolution": "Node",
     "allowSyntheticDefaultImports": true,
-    "esModuleInterop": true
-  }
+    "esModuleInterop": true,
+    "skipLibCheck": true
+  },
+  "exclude": ["node_modules", "dist"],
 }
