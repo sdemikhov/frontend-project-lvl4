@@ -19,6 +19,8 @@ lint:
 	npx eslint . --ext js,jsx,ts,tsx
 	npx tsc --noEmit
 
+make check: lint test build
+
 publish:
 	npm publish
 

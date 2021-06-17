@@ -26,18 +26,20 @@ type Auth = {
   readonly isAuthorized: IsAuthorized,
 }
 
-function createCtx<A extends Record<string, unknown> | null>():
-    readonly [() => A, React.Provider<A | undefined>] {
+const createCtx = <A extends Record<string, unknown> | null>():
+    readonly [() => A, React.Provider<A | undefined>] => {
   const ctx = createContext<A | undefined>(undefined);
-  function useCtx(): A {
+
+  const useCtx = (): A => {
     const c = React.useContext(ctx);
     if (c === undefined) {
       throw new Error('useCtx must be inside a Provider with a value');
     }
     return c;
-  }
+  };
+
   return [useCtx, ctx.Provider] as const;
-}
+};
 
 export const [useAuth, AuthProvider] = createCtx<Auth>();
 
