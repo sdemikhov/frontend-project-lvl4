@@ -9,7 +9,7 @@ import { useHistory } from 'react-router-dom';
 
 import validationSchemas from '../validation-schemas.js';
 import routes from '../routes.ts';
-import { useAuth } from '../auth.jsx';
+import { useAuth } from '../auth.tsx';
 
 const RegisterForm = () => {
   const { t } = useTranslation();

@@ -7,7 +7,7 @@ import Form from 'react-bootstrap/Form';
 import Button from 'react-bootstrap/Button';
 
 import { useSocket } from '../socket.jsx';
-import { useAuth } from '../auth.jsx';
+import { useAuth } from '../auth.tsx';
 import validationSchemas from '../validation-schemas.js';
 import { selectCurrentChannelId } from '../slices/channels-slice.js';
 

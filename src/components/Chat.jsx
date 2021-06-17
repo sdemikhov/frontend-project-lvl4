@@ -5,7 +5,7 @@ import Spinner from 'react-bootstrap/Spinner';
 import Col from 'react-bootstrap/Col';
 import axios from 'axios';
 
-import { useAuth } from '../auth.jsx';
+import { useAuth } from '../auth.tsx';
 import Channels from './Channels.jsx';
 import Messages from './Messages.jsx';
 import SendMessageForm from './SendMessageForm.jsx';

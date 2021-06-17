@@ -4,7 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { useHistory } from 'react-router-dom';
 import Button from 'react-bootstrap/Button';
 
-import { useAuth } from '../auth.jsx';
+import { useAuth } from '../auth';
 import routes from '../routes';
 
 const NavigationToolbar = (): JSX.Element => {

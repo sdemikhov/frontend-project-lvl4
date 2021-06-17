@@ -5,7 +5,7 @@ import {
 } from 'react-router-dom';
 
 import routes from '../routes.ts';
-import { useAuth } from '../auth.jsx';
+import { useAuth } from '../auth.tsx';
 
 const PrivateRoute = ({ children, path, exact }) => {
   const auth = useAuth();
