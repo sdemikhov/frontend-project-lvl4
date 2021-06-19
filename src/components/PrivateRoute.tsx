@@ -4,10 +4,16 @@ import {
   Redirect,
 } from 'react-router-dom';
 
-import routes from '../routes.ts';
-import { useAuth } from '../auth.tsx';
+import routes from '../routes';
+import { useAuth } from '../auth';
 
-const PrivateRoute = ({ children, path, exact }) => {
+type PrivateRouteProps = {
+  readonly children: React.ReactNode,
+  readonly path: string,
+  readonly exact: true,
+}
+
+const PrivateRoute = ({ children, path, exact }: PrivateRouteProps): JSX.Element => {
   const auth = useAuth();
 
   return (

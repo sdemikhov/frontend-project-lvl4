@@ -5,25 +5,25 @@ import Spinner from 'react-bootstrap/Spinner';
 import Col from 'react-bootstrap/Col';
 import axios from 'axios';
 
-import { useAuth } from '../auth.tsx';
+import { useAuth, Auth } from '../auth';
 import Channels from './Channels.jsx';
 import Messages from './Messages.jsx';
 import SendMessageForm from './SendMessageForm.jsx';
-import routes from '../routes.ts';
+import routes from '../routes';
 import { setInitialState } from '../slices/channels-slice.js';
 
-const Chat = () => {
+const Chat = (): JSX.Element => {
   const dispatch = useDispatch();
   const { t } = useTranslation();
-  const auth = useAuth();
-  const sendMessageInputRef = useRef(null);
+  const auth: Auth = useAuth();
+  const sendMessageInputRef = useRef<HTMLElement>(null);
   const [loading, setLoading] = useState('idle');
-  const [error, setError] = useState(null);
+  const [error, setError] = useState({ key: '' });
 
   useEffect(() => {
     let didMount = true; // eslint-disable-line
 
-    const getChatData = async (token) => {
+    const getChatData = async (token: string | null): Promise<void> => {
       try {
         setLoading('pending');
         const response = await axios.get(routes.chatDataPath(), {
@@ -36,7 +36,7 @@ const Chat = () => {
         }
       } catch (err) {
         if (axios.isAxiosError(err)) {
-          if (err.response.status === 401) {
+          if (err.response?.status === 401) {
             auth.signout();
           } else {
             setError({ key: 'errors.network.common' });
@@ -45,11 +45,11 @@ const Chat = () => {
           setError({ key: 'errors.unknown' });
         }
 
-        setLoading({ key: 'rejected' });
+        setLoading('rejected');
       }
     };
 
-    if (sendMessageInputRef.current) {
+    if (sendMessageInputRef.current?.focus) {
       sendMessageInputRef.current.focus();
     }
 

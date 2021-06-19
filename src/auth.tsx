@@ -16,7 +16,7 @@ type SignIn = (a: UserData) => void;
 type SignOut = () => void;
 type IsAuthorized = () => boolean;
 
-type Auth = {
+export type Auth = {
   readonly user: {
     readonly username: string | null,
     readonly token: string | null,

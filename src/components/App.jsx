@@ -13,8 +13,8 @@ import LoginForm from './LoginForm.jsx';
 import RegisterForm from './RegisterForm.jsx';
 import NavigationToolbar from './NavigationToolbar.tsx';
 import PageNotFound from './PageNotFound.tsx';
-import PrivateRoute from './PrivateRoute.jsx';
-import Chat from './Chat.jsx';
+import PrivateRoute from './PrivateRoute.tsx';
+import Chat from './Chat.tsx';
 
 const App = () => (
   <Router>

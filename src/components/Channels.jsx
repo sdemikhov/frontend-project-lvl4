@@ -9,9 +9,9 @@ import ButtonGroup from 'react-bootstrap/ButtonGroup';
 
 import { setCurrentChannelId, selectCurrentChannelId } from '../slices/channels-slice.js';
 import { openModal } from '../slices/modal-slice.js';
-import ChannelModal from './ChannelModal.jsx';
+import ChannelModal from './ChannelModal.tsx';
 
-const Channel = React.forwardRef(
+const ChannelRecord = React.forwardRef(
   ({ body: { id, name, removable } }, ref) => {
     const dispatch = useDispatch();
     const { t } = useTranslation();
@@ -87,7 +87,7 @@ const Channels = (props, ref) => {
           </Button>
         </div>
         {channels.map(
-          (channel) => <Channel key={channel.id} body={channel} ref={ref} />,
+          (channel) => <ChannelRecord key={channel.id} body={channel} ref={ref} />,
         )}
       </Nav>
       <ChannelModal />

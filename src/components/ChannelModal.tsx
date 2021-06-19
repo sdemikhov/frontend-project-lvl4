@@ -4,11 +4,17 @@ import { useSelector, useDispatch } from 'react-redux';
 import Modal from 'react-bootstrap/Modal';
 
 import { closeModal } from '../slices/modal-slice.js';
-import AddСhannelForm from './AddChannelForm.jsx';
+import AddСhannelForm from './AddChannelForm';
 import RenameСhannelForm from './RenameChannelForm.jsx';
 import RemoveChannelDialog from './RemoveChannelDialog.jsx';
 
-const ChannelModalBody = ({ type, onCloseModal }) => {
+export type OnCloseModal = () => void
+type ChannelModalBodyProps = {
+  readonly type: string | null,
+  readonly onCloseModal: OnCloseModal,
+}
+
+const ChannelModalBody = ({ type, onCloseModal }: ChannelModalBodyProps): JSX.Element | null => {
   switch (type) {
     case 'removeChannel':
       return (
@@ -33,12 +39,20 @@ const ChannelModalBody = ({ type, onCloseModal }) => {
   }
 };
 
-const ChannelModal = () => {
+type ChannelModalState = { readonly modalInfo: {
+    readonly isOpened: boolean,
+    readonly type: string | null,
+  }
+};
+
+const ChannelModal = (): JSX.Element => {
   const { t } = useTranslation();
   const dispatch = useDispatch();
-  const { isOpened, type } = useSelector(({ modalInfo }) => modalInfo);
+  const { isOpened, type } = useSelector(
+    ({ modalInfo }: ChannelModalState) => modalInfo,
+  );
 
-  const onCloseModal = () => {
+  const onCloseModal: OnCloseModal = () => {
     dispatch(closeModal());
   };
 

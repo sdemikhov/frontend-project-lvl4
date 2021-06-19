@@ -3,19 +3,25 @@ import { Formik } from 'formik';
 import { useTranslation } from 'react-i18next';
 import Form from 'react-bootstrap/Form';
 import Button from 'react-bootstrap/Button';
+import _ from 'lodash';
 
 import validationSchemas from '../validation-schemas.js';
 import { useSocket } from '../socket.jsx';
+import { OnCloseModal } from './ChannelModal';
+
+type AddChannelFormProps = {
+  readonly onCloseModal: OnCloseModal,
+}
 
 const AddChannelForm = ({
   onCloseModal,
-}) => {
+}: AddChannelFormProps): JSX.Element => {
   const { t } = useTranslation();
   const socket = useSocket();
-  const inputRef = useRef(null);
+  const inputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
-    inputRef.current.focus();
+    inputRef.current?.focus();
   }, []);
 
   return (
@@ -23,7 +29,7 @@ const AddChannelForm = ({
       initialValues={{ channelName: '' }}
       validationSchema={validationSchemas.ChannelIteractionFormSchema}
       onSubmit={({ channelName }, { setSubmitting, setStatus }) => {
-        socket.emit('newChannel', { name: channelName }, (response) => {
+        socket.emit('newChannel', { name: channelName }, (response: { readonly status: string }) => {
           if (response.status === 'ok') {
             setSubmitting(false);
             onCloseModal();
@@ -62,7 +68,7 @@ const AddChannelForm = ({
               isInvalid={touched.channelName && !!errors.channelName}
             />
             <Form.Control.Feedback type="invalid">
-              {errors.channelName && t(errors.channelName.key)}
+              {errors.channelName && t(_.get(errors, 'channelName.key'))}
             </Form.Control.Feedback>
           </Form.Group>
           <Form.Group>
